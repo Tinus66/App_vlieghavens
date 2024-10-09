@@ -6,3 +6,5 @@ streamlit-option-menu
 folium
 streamlit_folium
 openpyxl
+plotly.express 
+folium.plugins
