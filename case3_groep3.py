@@ -169,7 +169,7 @@ if selected == 'Luchthavens':
         x='luchthaven',
         y='aantal_vluchten',
         title='Top 20 Meest Voorkomende Luchthavens',
-        labels={'luchthaven': 'Luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
+        labels={'luchthaven': 'luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
         color_discrete_sequence=['blue']  # Maak alle bars blauw
     )
 
