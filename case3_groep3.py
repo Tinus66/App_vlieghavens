@@ -266,7 +266,7 @@ if selected == 'Luchthavens':
     st.subheader("Drukte op luchthavens in de tijd")
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
-     def calculate_aircraft_on_airport(selected_time):
+    def calculate_aircraft_on_airport(selected_time):
     # Zorg ervoor dat de STD-kolom correct is geformatteerd als datetime
       df['STD'] = pd.to_datetime(df['STD'], errors='coerce')
     
