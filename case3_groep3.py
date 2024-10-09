@@ -270,6 +270,10 @@ if selected == 'Luchthavens':
     # Zorg ervoor dat de STD-kolom correct is geformatteerd als datetime
       df['STD'] = pd.to_datetime(df['STD'], errors='coerce')
     
+    # Zorg ervoor dat selected_time een pd.Timestamp is
+      if not isinstance(selected_time, pd.Timestamp):
+          selected_time = pd.to_datetime(selected_time)
+    
     # Filter de dataframe op basis van landingen en vertrektijden
       landed = df[(df['LSV'] == 'L') & (df['STD'].notna()) & (df['STD'] <= selected_time)]
       departed = df[(df['LSV'] == 'S') & (df['STD'].notna()) & (df['STD'] <= selected_time)]
@@ -283,6 +287,7 @@ if selected == 'Luchthavens':
       airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
 
       return airport_traffic
+
 
 
 # Streamlit interface
