@@ -311,8 +311,8 @@ if selected == 'Luchthavens':
 
         for day in days:
           filtered_data = calculate_aircraft_on_airport(day)
-            fig = px.bar(filtered_data, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
-            frames.append(go.Frame(data=fig.data, name=str(day.date())))
+          fig = px.bar(filtered_data, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
+          frames.append(go.Frame(data=fig.data, name=str(day.date())))
 
     # Initiële figuur
         initial_fig = calculate_aircraft_on_airport(days[0])
