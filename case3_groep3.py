@@ -209,10 +209,10 @@ if selected == 'Luchthavens':
     st.plotly_chart(fig)
 # Controleer de kolommen
     st.write("Kolommen in df:", df.columns)
-    st.write("Kolommen in merged_df:", merged_df.columns)
+    st.write("Kolommen in df:", merged_df.columns)
 
 # Gemiddelde vertraging per luchthaven en jaar berekenen
-    gemiddelde_vertraging = merged_df.groupby(['City', 'Jaartal'])['verschil_minuten'].mean().reset_index()
+    gemiddelde_vertraging = df.groupby(['City', 'Jaartal'])['verschil_minuten'].mean().reset_index()
 
 # Aantal vluchten per luchthaven en jaar tellen
     aantal_vluchten = df.groupby(['City', 'Jaartal']).size().reset_index(name='aantal_vluchten')
@@ -267,8 +267,8 @@ if selected == 'Luchthavens':
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
     def calculate_aircraft_on_airport(selected_time):
-        landed = merged_df[(merged_df['LSV'] == 'L') & (merged_df['STD'] <= selected_time)]
-        departed = merged_df[(merged_df['LSV'] == 'S') & (merged_df['STD'] <= selected_time)]
+        landed = merged_df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
+        departed = merged_df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
     
         landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
         departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
@@ -343,8 +343,8 @@ if selected == 'Luchthavens':
     st.subheader("Hittekaart Europa")
 
 # Voeg coördinaten toe en vervang komma's in de coördinaten
-    df['Latitude'] = merged_df['Latitude'].astype(str).str.replace(',', '.').astype(float)
-    df['Longitude'] = merged_df['Longitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
 # Functie om de heatmap te genereren
     def create_aircraft_traffic_map(selected_time):
