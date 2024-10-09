@@ -266,17 +266,24 @@ if selected == 'Luchthavens':
     st.subheader("Drukte op luchthavens in de tijd")
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
-    def calculate_aircraft_on_airport(selected_time):
-        landed = df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
-        departed = df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
+     def calculate_aircraft_on_airport(selected_time):
+    # Zorg ervoor dat de STD-kolom correct is geformatteerd als datetime
+      df['STD'] = pd.to_datetime(df['STD'], errors='coerce')
     
-        landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
-        departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
+    # Filter de dataframe op basis van landingen en vertrektijden
+      landed = df[(df['LSV'] == 'L') & (df['STD'].notna()) & (df['STD'] <= selected_time)]
+      departed = df[(df['LSV'] == 'S') & (df['STD'].notna()) & (df['STD'] <= selected_time)]
+    
+    # Tel het aantal vliegtuigen per luchthaven
+      landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
+      departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
 
-        airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
-        airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
+    # Bereken het aantal vliegtuigen dat nog op de luchthaven is
+      airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
+      airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
 
-        return airport_traffic
+      return airport_traffic
+
 
 # Streamlit interface
     st.title("Vliegtuigen op luchthavens")
