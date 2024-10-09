@@ -279,11 +279,11 @@ if selected == 'Luchthavens':
       departed = df[(df['LSV'] == 'S') & (df['STD'].notna()) & (df['STD'] <= selected_time)]
     
     # Tel het aantal vliegtuigen per luchthaven
-      landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
-      departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
+      landed_count = landed.groupby('City')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
+      departed_count = departed.groupby('City')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
 
     # Bereken het aantal vliegtuigen dat nog op de luchthaven is
-      airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
+      airport_traffic = pd.merge(landed_count, departed_count, on='City', how='left').fillna(0)
       airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
 
       return airport_traffic
