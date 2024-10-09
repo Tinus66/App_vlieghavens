@@ -313,6 +313,8 @@ if selected == 'Luchthavens':
 
     st.plotly_chart(fig)
 
+
+  
 # Interactieve grafiek met een slider
     def create_aircraft_slider_plot():
         start_date = pd.to_datetime('2019-01-01')
