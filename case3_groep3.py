@@ -293,13 +293,14 @@ if selected == 'Luchthavens':
 # Streamlit interface
     st.title("Vliegtuigen op luchthavens")
     st.write("Selecteer een datum om het aantal vliegtuigen per luchthaven te zien.")
-
+    st.write("")  
+    st.write("")  
 # Datumkeuze
     selected_date = st.date_input("Kies een datum:", value=pd.to_datetime('2019-07-15'))
 
 # Bereken het aantal vliegtuigen voor de geselecteerde datum
     airport_traffic = calculate_aircraft_on_airport(selected_date)
-
+    st.write("")  
 # Bar plot weergeven
     fig = px.bar(
         airport_traffic,
@@ -312,10 +313,8 @@ if selected == 'Luchthavens':
     )
 
     st.plotly_chart(fig)
-
-
-    st.write("")
-    st.write("")
+    st.write("")  
+    st.write("")  
 # Interactieve grafiek met een slider
     def create_aircraft_slider_plot():
         start_date = pd.to_datetime('2019-01-01')
