@@ -368,21 +368,21 @@ if selected == 'Luchthavens':
     traffic_map = folium.Map(location=[50, 10], zoom_start=4)
     
     # Voeg markers toe voor elke luchthaven
-        for idx, row in airport_traffic.iterrows():
-            folium.CircleMarker(
-                location=[row['Latitude'], row['Longitude']],
-                radius=row['Aantal_vliegtuigen'] / 10,
-                color='red',
-                fill=True,
-                fill_opacity=0.6,
-                tooltip=f"Luchthaven: {row['City']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
-            ).add_to(traffic_map)
+    for idx, row in airport_traffic.iterrows():
+      folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=row['Aantal_vliegtuigen'] / 10,
+        color='red',
+        fill=True,
+        fill_opacity=0.6,
+        tooltip=f"Luchthaven: {row['City']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+        ).add_to(traffic_map)
 
     # Voeg heatmap toe
-        heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
-        HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
+    heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
+    HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
 
-        return traffic_map
+    return traffic_map
 
 # Streamlit-app
     def main():
