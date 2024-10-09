@@ -209,7 +209,7 @@ if selected == 'Luchthavens':
     st.plotly_chart(fig)
 # Controleer de kolommen
     st.write("Kolommen in df:", df.columns)
-    st.write("Kolommen in df:", merged_df.columns)
+    st.write("Kolommen in df:", df.columns)
 
 # Gemiddelde vertraging per luchthaven en jaar berekenen
     gemiddelde_vertraging = df.groupby(['City', 'Jaartal'])['verschil_minuten'].mean().reset_index()
