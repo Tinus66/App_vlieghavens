@@ -186,7 +186,7 @@ if selected == 'Luchthavens':
     st.subheader("Luchthavens zijn optijd?")
 
     # Groeperen per luchthaven en status
-    grouped = merged_df.groupby(['City', 'status']).size().unstack(fill_value=0)
+    grouped = df.groupby(['City', 'status']).size().unstack(fill_value=0)
 
     # Berekenen van het percentage per luchthaven
     grouped_percentage = grouped.div(grouped.sum(axis=1), axis=0) * 100
