@@ -303,10 +303,10 @@ if selected == 'Luchthavens':
 # Bar plot weergeven
     fig = px.bar(
         airport_traffic,
-        x='luchthaven',
+        x='City',
         y='Aantal_vliegtuigen',
         title=f"Aantal vliegtuigen per luchthaven op {selected_date}",
-        labels={'luchthaven': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
+        labels={'City': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
         color='Aantal_vliegtuigen',
         color_continuous_scale=px.colors.sequential.Viridis
     )
