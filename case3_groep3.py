@@ -381,8 +381,7 @@ if selected == 'Luchthavens':
     # Voeg heatmap toe
     heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
     HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
-
-    return traffic_map
+      return traffic_map
 
 # Streamlit-app
     def main():
