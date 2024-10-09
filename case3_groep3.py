@@ -267,8 +267,8 @@ if selected == 'Luchthavens':
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
     def calculate_aircraft_on_airport(selected_time):
-        landed = merged_df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
-        departed = merged_df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
+        landed = df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
+        departed = df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
     
         landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
         departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
