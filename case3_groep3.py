@@ -166,7 +166,7 @@ if selected == 'Luchthavens':
     # Maak een bar plot van de 20 meest voorkomende luchthavens met Plotly
     fig = px.bar(
         luchthaven_frequentie,
-        x='luchthaven',
+        x='City',
         y='aantal_vluchten',
         title='Top 20 Meest Voorkomende Luchthavens',
         labels={'luchthaven': 'Luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
