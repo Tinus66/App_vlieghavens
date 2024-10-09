@@ -373,7 +373,7 @@ if selected == 'Luchthavens':
                 color='red',
                 fill=True,
                 fill_opacity=0.6,
-                tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+                tooltip=f"Luchthaven: {row['City']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
             ).add_to(traffic_map)
 
     # Voeg heatmap toe
