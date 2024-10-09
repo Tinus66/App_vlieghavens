@@ -360,28 +360,38 @@ if selected == 'Luchthavens':
     df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
     df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
-# Functie om de heatmap te genereren
     def create_aircraft_traffic_map(selected_time):
+    # Bereken het aantal vliegtuigen op de luchthavens op de geselecteerde tijd
       airport_traffic = calculate_aircraft_on_airport(selected_time)
-    
+
+    # Controleer of er data is
+      if airport_traffic.empty:
+          st.warning("Geen data beschikbaar voor de heatmap.")
+          return None  # Of geef een standaard kaart terug
+
+    # Zorg dat de coördinaten numeriek zijn
+      airport_traffic['Latitude'] = airport_traffic['Latitude'].astype(float)
+      airport_traffic['Longitude'] = airport_traffic['Longitude'].astype(float)
+
     # Maak de kaart met een centraal punt in Europa
-    traffic_map = folium.Map(location=[50, 10], zoom_start=4)
-    
-    # Voeg markers toe voor elke luchthaven
-    for idx, row in airport_traffic.iterrows():
-      folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=row['Aantal_vliegtuigen'] / 10,
-        color='red',
-        fill=True,
-        fill_opacity=0.6,
-        tooltip=f"Luchthaven: {row['City']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
-        ).add_to(traffic_map)
+      traffic_map = folium.Map(location=[50, 10], zoom_start=4)
+
+    # Voeg markers toe aan de kaart voor elke luchthaven
+      for idx, row in airport_traffic.iterrows():
+          folium.CircleMarker(
+              location=[row['Latitude'], row['Longitude']],
+              radius=row['Aantal_vliegtuigen'] / 10,  # Maak de marker afhankelijk van het aantal vliegtuigen
+              color='red',  # Rode markers voor het aantal vliegtuigen op de luchthaven
+              fill=True,
+              fill_opacity=0.6,
+              tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+          ).add_to(traffic_map)
 
     # Voeg heatmap toe
-    heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
-    HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
-    return traffic_map
+      heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
+      HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
+
+      return traffic_map
 
 # Streamlit-app
     def main():
