@@ -354,18 +354,18 @@ if selected == 'Luchthavens':
     if st.checkbox("Toon interactieve grafiek met slider"):
         create_aircraft_slider_plot()
 
-      st.subheader("Hittekaart Europa")
+    st.subheader("Hittekaart Europa")
 
 # Voeg coördinaten toe en vervang komma's in de coördinaten
-      df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
-      df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
 # Functie om de heatmap te genereren
-      def create_aircraft_traffic_map(selected_time):
-        airport_traffic = calculate_aircraft_on_airport(selected_time)
+    def create_aircraft_traffic_map(selected_time):
+      airport_traffic = calculate_aircraft_on_airport(selected_time)
     
     # Maak de kaart met een centraal punt in Europa
-      traffic_map = folium.Map(location=[50, 10], zoom_start=4)
+    traffic_map = folium.Map(location=[50, 10], zoom_start=4)
     
     # Voeg markers toe voor elke luchthaven
         for idx, row in airport_traffic.iterrows():
