@@ -152,5 +152,15 @@ if selected == 'Luchthavens':
   st.subheader("Top 20 luchthavens") 
   df = ("DatasetLuchthaven_murged2.csv")
 
+# Tellen van de meest voorkomende luchthavens
+  luchthaven_frequentie = ("luchthaven_frequentie.csv")
 
-
+# Maak een bar plot van de 20 meest voorkomende luchthavens met Plotly
+  fig = px.bar(
+      luchthaven_frequentie,
+      x='luchthaven',
+      y='aantal_vluchten',
+      title='Top 20 Meest Voorkomende Luchthavens',
+      labels={'luchthaven': 'Luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
+      color_discrete_sequence=['blue']  # Maak alle bars blauw
+  )
