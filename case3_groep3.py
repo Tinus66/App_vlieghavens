@@ -147,20 +147,62 @@ if selected == "Vluchten":
 
 # --------------------------------------------------------------------------
 # Vluchten pagina
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+from streamlit_folium import folium_static
+import folium
+from folium.plugins import HeatMap
+
+# Vluchten pagina
 if selected == 'Luchthavens':
-  st.title("Luchthavens") 
-  st.subheader("Top 20 luchthavens") 
-  df = ("DatasetLuchthaven_murged2.csv")
+    st.title("Luchthavens")
+    st.subheader("Top 20 luchthavens")
 
-# Tellen van de meest voorkomende luchthavens
-  luchthaven_frequentie = ("luchthaven_frequentie.csv")
+    # Lees de datasets in
+    df = pd.read_csv("DatasetLuchthaven_murged2.csv")
+    luchthaven_frequentie = pd.read_csv("luchthaven_frequentie.csv")
 
-# Maak een bar plot van de 20 meest voorkomende luchthavens met Plotly
-  fig = px.bar(
-      luchthaven_frequentie,
-      x='luchthaven',
-      y='aantal_vluchten',
-      title='Top 20 Meest Voorkomende Luchthavens',
-      labels={'luchthaven': 'Luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
-      color_discrete_sequence=['blue']  # Maak alle bars blauw
-  )
+    # Maak een bar plot van de 20 meest voorkomende luchthavens met Plotly
+    fig = px.bar(
+        luchthaven_frequentie,
+        x='luchthaven',
+        y='aantal_vluchten',
+        title='Top 20 Meest Voorkomende Luchthavens',
+        labels={'luchthaven': 'Luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
+        color_discrete_sequence=['blue']  # Maak alle bars blauw
+    )
+
+    # Pas de layout aan voor betere weergave
+    fig.update_layout(
+        xaxis_title='Luchthaven',
+        yaxis_title='Aantal Vluchten',
+        xaxis_tickangle=-45,
+    )
+
+    # Toon de grafiek
+    st.plotly_chart(fig)
+
+    st.subheader("Luchthavens zijn optijd?")
+
+    # Groeperen per luchthaven en status
+    grouped = df.groupby(['City', 'status'])['vluchten'].sum().unstack(fill_value=0)
+
+    # Berekenen van het percentage per luchthaven
+    grouped_percentage = grouped.div(grouped.sum(axis=1), axis=0) * 100
+
+    # Voor plotly moeten we het DataFrame omzetten naar een lang formaat
+    grouped_percentage_reset = grouped_percentage.reset_index().melt(id_vars='City', value_vars=['Te laat', 'Op tijd', 'Te vroeg'],
+                                                                     var_name='status', value_name='percentage')
+
+    # Maak een gestapelde bar plot met plotly express
+    fig = px.bar(grouped_percentage_reset, x='City', y='percentage', color='status',
+                 title='Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven',
+                 labels={'percentage': 'Percentage (%)', 'City': 'ICAO'},
+                 color_discrete_map={'Te laat': 'red', 'Op tijd': 'green', 'Te vroeg': 'blue'})
+
+    # Pas de lay-out van de grafiek aan
+    fig.update_layout(barmode='stack', xaxis={'categoryorder': 'total descending'})
+
+    # Toon de plot in Streamlit
+    st.plotly_chart(fig)
