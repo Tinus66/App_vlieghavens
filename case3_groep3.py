@@ -208,182 +208,182 @@ if selected == 'Luchthavens':
     # Toon de plot in Streamlit
     st.plotly_chart(fig)
 # Controleer de kolommen
-  st.write("Kolommen in df:", df.columns)
-  st.write("Kolommen in merged_df:", merged_df.columns)
+    st.write("Kolommen in df:", df.columns)
+    st.write("Kolommen in merged_df:", merged_df.columns)
 
 # Gemiddelde vertraging per luchthaven en jaar berekenen
-  gemiddelde_vertraging = merged_df.groupby(['City', 'Jaartal'])['verschil_minuten'].mean().reset_index()
+    gemiddelde_vertraging = merged_df.groupby(['City', 'Jaartal'])['verschil_minuten'].mean().reset_index()
 
 # Aantal vluchten per luchthaven en jaar tellen
-  aantal_vluchten = df.groupby(['City', 'Jaartal']).size().reset_index(name='aantal_vluchten')
+    aantal_vluchten = df.groupby(['City', 'Jaartal']).size().reset_index(name='aantal_vluchten')
 
 # De resultaten samenvoegen
-  if not gemiddelde_vertraging.empty and not aantal_vluchten.empty:
-      gemiddelde_vertraging = gemiddelde_vertraging.merge(aantal_vluchten, on=['City', 'Jaartal'])
+    if not gemiddelde_vertraging.empty and not aantal_vluchten.empty:
+        gemiddelde_vertraging = gemiddelde_vertraging.merge(aantal_vluchten, on=['City', 'Jaartal'])
 
 # Split de data op basis van jaartal
-  df_2019 = gemiddelde_vertraging[gemiddelde_vertraging['Jaartal'] == 2019]
-  df_2020 = gemiddelde_vertraging[gemiddelde_vertraging['Jaartal'] == 2020]
+    df_2019 = gemiddelde_vertraging[gemiddelde_vertraging['Jaartal'] == 2019]
+    df_2020 = gemiddelde_vertraging[gemiddelde_vertraging['Jaartal'] == 2020]
 
 # Bepaal de maximale en minimale waarde voor de y-as
-  max_vertraging = max(gemiddelde_vertraging['verschil_minuten'].max(), 0)
-  min_vertraging = min(gemiddelde_vertraging['verschil_minuten'].min(), 0)
+    max_vertraging = max(gemiddelde_vertraging['verschil_minuten'].max(), 0)
+    min_vertraging = min(gemiddelde_vertraging['verschil_minuten'].min(), 0)
 
 # Bar plot voor 2019
-  fig_2019 = px.bar(
-      df_2019,
-      x='City',
-      y='verschil_minuten',
-      title='Gemiddelde vertraging van vluchten per luchthaven in 2019 (in minuten)',
-      labels={'City': 'ICAO', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
-      color='verschil_minuten',
-      text='aantal_vluchten',  # Aantal vluchten als tekstlabel
-      color_continuous_scale=px.colors.sequential.Viridis
-  )
+    fig_2019 = px.bar(
+        df_2019,
+        x='City',
+        y='verschil_minuten',
+        title='Gemiddelde vertraging van vluchten per luchthaven in 2019 (in minuten)',
+        labels={'City': 'ICAO', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
+        color='verschil_minuten',
+        text='aantal_vluchten',  # Aantal vluchten als tekstlabel
+        color_continuous_scale=px.colors.sequential.Viridis
+    )
 
 # Y-as instellen voor 2019
-  fig_2019.update_yaxes(range=[min_vertraging, max_vertraging])
+    fig_2019.update_yaxes(range=[min_vertraging, max_vertraging])
 
 # Bar plot voor 2020
-  fig_2020 = px.bar(
-      df_2020,
-      x='City',
-      y='verschil_minuten',
-      title='Gemiddelde vertraging van vluchten per luchthaven in 2020 (in minuten)',
-      labels={'City': 'Luchthaven', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
-      color='verschil_minuten',
-      text='aantal_vluchten',  # Aantal vluchten als tekstlabel
-      color_continuous_scale=px.colors.sequential.Viridis
-  )
+    fig_2020 = px.bar(
+        df_2020,
+        x='City',
+        y='verschil_minuten',
+        title='Gemiddelde vertraging van vluchten per luchthaven in 2020 (in minuten)',
+        labels={'City': 'Luchthaven', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
+        color='verschil_minuten',
+        text='aantal_vluchten',  # Aantal vluchten als tekstlabel
+        color_continuous_scale=px.colors.sequential.Viridis
+    )
 
 # Y-as instellen voor 2020
-  fig_2020.update_yaxes(range=[min_vertraging, max_vertraging])
+    fig_2020.update_yaxes(range=[min_vertraging, max_vertraging])
 
 # Plotten van beide figuren in Streamlit
-  st.plotly_chart(fig_2019)
-  st.plotly_chart(fig_2020)
+    st.plotly_chart(fig_2019)
+    st.plotly_chart(fig_2020)
 
-  st.subheader("Drukte op luchthavens in de tijd")
+    st.subheader("Drukte op luchthavens in de tijd")
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
-  def calculate_aircraft_on_airport(selected_time):
-      landed = merged_df[(merged_df['LSV'] == 'L') & (merged_df['STD'] <= selected_time)]
-      departed = merged_df[(merged_df['LSV'] == 'S') & (merged_df['STD'] <= selected_time)]
+    def calculate_aircraft_on_airport(selected_time):
+        landed = merged_df[(merged_df['LSV'] == 'L') & (merged_df['STD'] <= selected_time)]
+        departed = merged_df[(merged_df['LSV'] == 'S') & (merged_df['STD'] <= selected_time)]
     
-      landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
-      departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
+        landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
+        departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
 
-      airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
-      airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
+        airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
+        airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
 
-      return airport_traffic
+        return airport_traffic
 
 # Streamlit interface
-  st.title("Vliegtuigen op luchthavens")
-  st.write("Selecteer een datum om het aantal vliegtuigen per luchthaven te zien.")
+    st.title("Vliegtuigen op luchthavens")
+    st.write("Selecteer een datum om het aantal vliegtuigen per luchthaven te zien.")
 
 # Datumkeuze
-  selected_date = st.date_input("Kies een datum:", value=pd.to_datetime('2019-07-15'))
+    selected_date = st.date_input("Kies een datum:", value=pd.to_datetime('2019-07-15'))
 
 # Bereken het aantal vliegtuigen voor de geselecteerde datum
-  airport_traffic = calculate_aircraft_on_airport(selected_date)
+    airport_traffic = calculate_aircraft_on_airport(selected_date)
 
 # Bar plot weergeven
-  fig = px.bar(
-      airport_traffic,
-      x='luchthaven',
-      y='Aantal_vliegtuigen',
-      title=f"Aantal vliegtuigen per luchthaven op {selected_date}",
-      labels={'luchthaven': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
-      color='Aantal_vliegtuigen',
-      color_continuous_scale=px.colors.sequential.Viridis
-  )
+    fig = px.bar(
+        airport_traffic,
+        x='luchthaven',
+        y='Aantal_vliegtuigen',
+        title=f"Aantal vliegtuigen per luchthaven op {selected_date}",
+        labels={'luchthaven': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
+        color='Aantal_vliegtuigen',
+        color_continuous_scale=px.colors.sequential.Viridis
+    )
 
-  st.plotly_chart(fig)
+    st.plotly_chart(fig)
 
 # Interactieve grafiek met een slider
-  def create_aircraft_slider_plot():
-      start_date = pd.to_datetime('2019-01-01')
-      end_date = pd.to_datetime('2020-12-31')
-      days = pd.date_range(start=start_date, end=end_date, freq='D')
+    def create_aircraft_slider_plot():
+        start_date = pd.to_datetime('2019-01-01')
+        end_date = pd.to_datetime('2020-12-31')
+        days = pd.date_range(start=start_date, end=end_date, freq='D')
 
-      frames = []
+        frames = []
 
-      for day in days:
+        for day in days:
           filtered_data = calculate_aircraft_on_airport(day)
-          fig = px.bar(filtered_data, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
-          frames.append(go.Frame(data=fig.data, name=str(day.date())))
+            fig = px.bar(filtered_data, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
+            frames.append(go.Frame(data=fig.data, name=str(day.date())))
 
     # Initiële figuur
-      initial_fig = calculate_aircraft_on_airport(days[0])
-      fig = px.bar(initial_fig, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {days[0].date()}")
+        initial_fig = calculate_aircraft_on_airport(days[0])
+        fig = px.bar(initial_fig, x='luchthaven', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {days[0].date()}")
 
-      fig = go.Figure(
-          data=fig.data,
-          layout=go.Layout(
-              sliders=[{
-                  'steps': [{
-                      'args': [[str(day.date())], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate'}],
-                      'label': str(day.date()),
-                      'method': 'animate'
-                  } for day in days],
-                  'currentvalue': {'prefix': 'Datum: '},
-                  'pad': {'b': 10},
-              }]
-          ),
-          frames=frames
-      )
+        fig = go.Figure(
+            data=fig.data,
+            layout=go.Layout(
+                sliders=[{
+                    'steps': [{
+                        'args': [[str(day.date())], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate'}],
+                        'label': str(day.date()),
+                        'method': 'animate'
+                    } for day in days],
+                    'currentvalue': {'prefix': 'Datum: '},
+                    'pad': {'b': 10},
+                }]
+            ),
+            frames=frames
+        )
 
-      st.plotly_chart(fig)
+        st.plotly_chart(fig)
 
 # Aanroepen van de slider grafiek
-  if st.checkbox("Toon interactieve grafiek met slider"):
-      create_aircraft_slider_plot()
+    if st.checkbox("Toon interactieve grafiek met slider"):
+        create_aircraft_slider_plot()
 
-  st.subheader("Hittekaart Europa")
+    st.subheader("Hittekaart Europa")
 
 # Voeg coördinaten toe en vervang komma's in de coördinaten
-  df['Latitude'] = merged_df['Latitude'].astype(str).str.replace(',', '.').astype(float)
-  df['Longitude'] = merged_df['Longitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Latitude'] = merged_df['Latitude'].astype(str).str.replace(',', '.').astype(float)
+    df['Longitude'] = merged_df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
 # Functie om de heatmap te genereren
-  def create_aircraft_traffic_map(selected_time):
-      airport_traffic = calculate_aircraft_on_airport(selected_time)
+    def create_aircraft_traffic_map(selected_time):
+        airport_traffic = calculate_aircraft_on_airport(selected_time)
     
     # Maak de kaart met een centraal punt in Europa
-      traffic_map = folium.Map(location=[50, 10], zoom_start=4)
+        traffic_map = folium.Map(location=[50, 10], zoom_start=4)
     
     # Voeg markers toe voor elke luchthaven
-      for idx, row in airport_traffic.iterrows():
-          folium.CircleMarker(
-              location=[row['Latitude'], row['Longitude']],
-              radius=row['Aantal_vliegtuigen'] / 10,
-              color='red',
-              fill=True,
-              fill_opacity=0.6,
-              tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
-          ).add_to(traffic_map)
+        for idx, row in airport_traffic.iterrows():
+            folium.CircleMarker(
+                location=[row['Latitude'], row['Longitude']],
+                radius=row['Aantal_vliegtuigen'] / 10,
+                color='red',
+                fill=True,
+                fill_opacity=0.6,
+                tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+            ).add_to(traffic_map)
 
     # Voeg heatmap toe
-      heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
-      HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
+        heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
+        HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
 
-      return traffic_map
+        return traffic_map
 
 # Streamlit-app
-  def main():
-      st.title("Interactieve Luchtvaartkaart")
+    def main():
+        st.title("Interactieve Luchtvaartkaart")
     
     # Datumselector
-      start_date = pd.to_datetime('2019-01-01')
-      end_date = pd.to_datetime('2020-12-31')
-      selected_day = st.date_input("Selecteer een datum", value=start_date)
+        start_date = pd.to_datetime('2019-01-01')
+        end_date = pd.to_datetime('2020-12-31')
+        selected_day = st.date_input("Selecteer een datum", value=start_date)
 
-      if start_date <= pd.Timestamp(selected_day) <= end_date:
-          selected_date_time = pd.Timestamp(selected_day)
-          traffic_map = create_aircraft_traffic_map(selected_date_time)
+        if start_date <= pd.Timestamp(selected_day) <= end_date:
+            selected_date_time = pd.Timestamp(selected_day)
+            traffic_map = create_aircraft_traffic_map(selected_date_time)
         
-          st.subheader(f"Luchtvaartverkeer op {selected_day}")
-          st_folium(traffic_map)
-      else:
-          st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
+            st.subheader(f"Luchtvaartverkeer op {selected_day}")
+            st_folium(traffic_map)
+        else:
+            st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
