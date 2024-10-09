@@ -429,3 +429,6 @@ if selected == 'Luchthavens':
         else:
             st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
 
+# Roep de main functie aan om de Streamlit-app te starten
+    if __name__ == "__main__":
+        main()
