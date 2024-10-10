@@ -562,6 +562,6 @@ if selected == 'Luchthavens':
           st_folium(traffic_map)  # Gebruik st_folium in plaats van folium_static
       else:
           st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
-    if __name__ == "__main__":
-      main()
+  if __name__ == "__main__":
+    main()
       
