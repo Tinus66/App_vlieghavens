@@ -387,105 +387,105 @@ if selected == 'Luchthavens':
 
 
 # Streamlit interface
-    st.title("Vliegtuigen op luchthavens")
-    st.write("Selecteer een datum om het aantal vliegtuigen per luchthaven te zien.")
-    st.write("")  
-    st.write("")  
+  st.title("Vliegtuigen op luchthavens")
+  st.write("Selecteer een datum om het aantal vliegtuigen per luchthaven te zien.")
+  st.write("")  
+  st.write("")  
 # Datumkeuze
-    selected_date = st.date_input("Kies een datum:", value=pd.to_datetime('2019-07-15'))
+  selected_date = st.date_input("Kies een datum:", value=pd.to_datetime('2019-07-15'))
 
 # Bereken het aantal vliegtuigen voor de geselecteerde datum
-    airport_traffic = calculate_aircraft_on_airport(selected_date)
-    st.write("")  
+  airport_traffic = calculate_aircraft_on_airport(selected_date)
+  st.write("")  
 # Bar plot weergeven
-    fig = px.bar(
-        airport_traffic,
-        x='City',
-        y='Aantal_vliegtuigen',
-        title=f"Aantal vliegtuigen per luchthaven op {selected_date}",
-        labels={'City': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
-        color='Aantal_vliegtuigen',
-        color_continuous_scale=px.colors.sequential.Viridis
-    )
+  fig = px.bar(
+      airport_traffic,
+      x='City',
+      y='Aantal_vliegtuigen',
+      title=f"Aantal vliegtuigen per luchthaven op {selected_date}",
+      labels={'City': 'Luchthaven', 'Aantal_vliegtuigen': 'Aantal Vliegtuigen'},
+      color='Aantal_vliegtuigen',
+      color_continuous_scale=px.colors.sequential.Viridis
+  )
 
-    st.plotly_chart(fig)
-    st.write("")  
-    st.write("")  
+  st.plotly_chart(fig)
+  st.write("")  
+  st.write("")  
 # Interactieve grafiek met een slider
-    def create_aircraft_slider_plot():
-        start_date = pd.to_datetime('2019-01-01')
-        end_date = pd.to_datetime('2020-12-31')
-        days = pd.date_range(start=start_date, end=end_date, freq='D')
+  def create_aircraft_slider_plot():
+      start_date = pd.to_datetime('2019-01-01')
+      end_date = pd.to_datetime('2020-12-31')
+      days = pd.date_range(start=start_date, end=end_date, freq='D')
 
-        frames = []
+      frames = []
 
-        for day in days:
-          filtered_data = calculate_aircraft_on_airport(day)
-          fig = px.bar(filtered_data, x='City', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
-          frames.append(go.Frame(data=fig.data, name=str(day.date())))
+      for day in days:
+        filtered_data = calculate_aircraft_on_airport(day)
+        fig = px.bar(filtered_data, x='City', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {day.date()}")
+        frames.append(go.Frame(data=fig.data, name=str(day.date())))
 
     # Initiële figuur
-        initial_fig = calculate_aircraft_on_airport(days[0])
-        fig = px.bar(initial_fig, x='City', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {days[0].date()}")
+      initial_fig = calculate_aircraft_on_airport(days[0])
+      fig = px.bar(initial_fig, x='City', y='Aantal_vliegtuigen', title=f"Aantal vliegtuigen per luchthaven op {days[0].date()}")
 
-        fig = go.Figure(
-            data=fig.data,
-            layout=go.Layout(
-                sliders=[{
-                    'steps': [{
-                        'args': [[str(day.date())], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate'}],
-                        'label': str(day.date()),
-                        'method': 'animate'
-                    } for day in days],
-                    'currentvalue': {'prefix': 'Datum: '},
-                    'pad': {'b': 10},
-                }]
-            ),
-            frames=frames
-        )
+      fig = go.Figure(
+          data=fig.data,
+          layout=go.Layout(
+              sliders=[{
+                   'steps': [{
+                       'args': [[str(day.date())], {'frame': {'duration': 300, 'redraw': True}, 'mode': 'immediate'}],
+                      'label': str(day.date()),
+                       'method': 'animate'
+                   } for day in days],
+                   'currentvalue': {'prefix': 'Datum: '},
+                   'pad': {'b': 10},
+               }]
+          ),
+          frames=frames
+      )
 
-        st.plotly_chart(fig)
+      st.plotly_chart(fig)
 
 # Aanroepen van de slider grafiek
-    if st.checkbox("Toon interactieve grafiek met slider"):
+  if st.checkbox("Toon interactieve grafiek met slider"):
         create_aircraft_slider_plot()
 #--------------------------------------------------------------------------
 # Filterfunctie voor jaar
-    def filter_data_by_year(df, year):
-        return df[df['Jaartal'] == year]
+  def filter_data_by_year(df, year):
+      return df[df['Jaartal'] == year]
 
 # Streamlit app
-    def main():
-        st.title("Aantal vluchten per luchthaven in 2019 en 2020")
+  def main():
+    st.title("Aantal vluchten per luchthaven in 2019 en 2020")
 
     # Dropdown voor het selecteren van luchthaven
-        available_airports = df['City'].unique().tolist()
-        selected_airport = st.selectbox("Selecteer een luchthaven", available_airports)
+    available_airports = df['City'].unique().tolist()
+    selected_airport = st.selectbox("Selecteer een luchthaven", available_airports)
 
     # Radiobutton voor het selecteren van jaar
-        selected_year = st.radio("Kies een jaar:", [2019, 2020])
+    selected_year = st.radio("Kies een jaar:", [2019, 2020])
 
     # Filter de gegevens op basis van de gekozen luchthaven en jaar
-        filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
+    filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
 
     # Controleer of er data beschikbaar is na de filtering
-        if filtered_data.empty:
-            st.write(f"Geen data beschikbaar voor {selected_airport} in {selected_year}")
-            return
+    if filtered_data.empty:
+        st.write(f"Geen data beschikbaar voor {selected_airport} in {selected_year}")
+        return
 
     # Groepeer op maand en tel het aantal unieke vluchten (TAR) per maand
-        flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
-        flights_per_month.columns = ['Maand', 'Aantal_vluchten']
+    flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
+    flights_per_month.columns = ['Maand', 'Aantal_vluchten']
 
     # Lijndiagram maken met Plotly Express
-        fig = px.line(flights_per_month, 
-                      x='Maand', 
-                      y='Aantal_vluchten', 
-                      title=f"Aantal vluchten per maand in {selected_year} voor luchthaven {selected_airport}",
-                      labels={'Maand': 'Maand', 'Aantal_vluchten': 'Aantal vluchten'})
+    fig = px.line(flights_per_month, 
+                    x='Maand', 
+                    y='Aantal_vluchten', 
+                    title=f"Aantal vluchten per maand in {selected_year} voor luchthaven {selected_airport}",
+                    labels={'Maand': 'Maand', 'Aantal_vluchten': 'Aantal vluchten'})
   
     # Toon het lijndiagram
-        st.plotly_chart(fig)
+    st.plotly_chart(fig)
 #-------------------------------------------------------------------------------------------------
 
     st.subheader("Hittekaart Europa")
