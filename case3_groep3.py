@@ -564,3 +564,4 @@ if selected == 'Luchthavens':
           st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
     if __name__ == "__main__":
       main()
+      
