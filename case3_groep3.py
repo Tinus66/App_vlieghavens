@@ -49,7 +49,7 @@ if selected == "Vluchten":
 
   # Dropdownmenu in Streamlit om de vlucht te selecteren
   selected_vlucht = st.selectbox("Selecteer een vlucht", options=[f'vlucht {i}' for i in range(1, 8)])
-
+  @st.cache_data
   # Haal de geselecteerde dataframe op
   df1 = vluchten_data[selected_vlucht]
 
@@ -156,6 +156,7 @@ from folium.plugins import HeatMap
 import plotly.graph_objects as go
 
 # Vluchten pagina
+@st.cache_resource
 if selected == 'Luchthavens':
     st.title("Luchthavens")
     st.subheader("Top 20 luchthavens")
