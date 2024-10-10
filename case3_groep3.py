@@ -358,42 +358,6 @@ if selected == 'Luchthavens':
 #--------------------------------------------------------------------------------------
 
 # Filter de gegevens voor 2019 en 2020
-    def filter_data_by_year(df, year):
-        return df[df['Jaartal'] == year]
-
-# Streamlit app
-    def main():
-        st.title("Aantal vluchten per luchthaven in 2019 en 2020")
-
-    # Aanname: je dataset bevat ten minste de kolommen 'City', 'Jaartal', en 'TAR' (vluchtnummer of unieke identifier)
-    # Gegevens inladen of gebruiken
-    # merged_df = ... (laad je dataframe hier in)
-
-    # Filter de dataset om te laten zien in de dropdownmenu
-        available_airports = df['City'].unique().tolist()
-
-    # Dropdown om luchthaven te kiezen
-        selected_airport = st.selectbox("Selecteer een luchthaven", available_airports)
-
-    # Selecteer jaar (2019 of 2020)
-        selected_year = st.radio("Kies een jaar:", [2019, 2020])
-
-    # Filter de gegevens op basis van de geselecteerde luchthaven en jaar
-        filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
-
-    # Groepeer op maand en tel het aantal vluchten per maand
-        flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
-        flights_per_month.columns = ['Maand', 'Aantal_vluchten']
-
-    # Lijndiagram maken met Plotly Express
-        fig = px.line(flights_per_month, 
-                      x='Maand', 
-                      y='Aantal_vluchten', 
-                      title=f"Aantal vluchten per maand in {selected_year} voor luchthaven {selected_airport}",
-                      labels={'Maand': 'Maand', 'Aantal_vluchten': 'Aantal vluchten'})
-
-    # Toon het lijndiagram
-        st.plotly_chart(fig)
 
 
 
