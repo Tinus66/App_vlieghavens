@@ -459,106 +459,106 @@ if selected == 'Luchthavens':
     st.title("Aantal vluchten per luchthaven in 2019 en 2020")
 
     # Dropdown voor het selecteren van luchthaven
-    available_airports = df['City'].unique().tolist()
-    selected_airport = st.selectbox("Selecteer een luchthaven", available_airports)
+  available_airports = df['City'].unique().tolist()
+  selected_airport = st.selectbox("Selecteer een luchthaven", available_airports)
 
     # Radiobutton voor het selecteren van jaar
-    selected_year = st.radio("Kies een jaar:", [2019, 2020])
+  selected_year = st.radio("Kies een jaar:", [2019, 2020])
 
     # Filter de gegevens op basis van de gekozen luchthaven en jaar
-    filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
+  filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
 
     # Controleer of er data beschikbaar is na de filtering
-    if filtered_data.empty:
-        st.write(f"Geen data beschikbaar voor {selected_airport} in {selected_year}")
-        return
+  if filtered_data.empty:
+      st.write(f"Geen data beschikbaar voor {selected_airport} in {selected_year}")
+      return
 
     # Groepeer op maand en tel het aantal unieke vluchten (TAR) per maand
-    flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
-    flights_per_month.columns = ['Maand', 'Aantal_vluchten']
+  flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
+  flights_per_month.columns = ['Maand', 'Aantal_vluchten']
 
     # Lijndiagram maken met Plotly Express
-    fig = px.line(flights_per_month, 
-                    x='Maand', 
-                    y='Aantal_vluchten', 
-                    title=f"Aantal vluchten per maand in {selected_year} voor luchthaven {selected_airport}",
-                    labels={'Maand': 'Maand', 'Aantal_vluchten': 'Aantal vluchten'})
+  fig = px.line(flights_per_month, 
+                  x='Maand', 
+                  y='Aantal_vluchten', 
+                  title=f"Aantal vluchten per maand in {selected_year} voor luchthaven {selected_airport}",
+                  labels={'Maand': 'Maand', 'Aantal_vluchten': 'Aantal vluchten'})
   
     # Toon het lijndiagram
-    st.plotly_chart(fig)
+  st.plotly_chart(fig)
 #-------------------------------------------------------------------------------------------------
 
-    st.subheader("Hittekaart Europa")
+  st.subheader("Hittekaart Europa")
 # Zorg ervoor dat de coördinaten numeriek zijn
-    df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
-    df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
+  df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
+  df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
 # Voeg een nieuwe kolom toe voor de tijdstippen van de gebeurtenissen
-    df['STD'] = pd.to_datetime(df['STD'])  # Zorg dat STD als datetime is
+  df['STD'] = pd.to_datetime(df['STD'])  # Zorg dat STD als datetime is
 
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
-    def calculate_aircraft_on_airport(selected_time):
+  def calculate_aircraft_on_airport(selected_time):
     # Filter de data voor alle vluchten die al geland zijn, maar nog niet vertrokken op het gekozen tijdstip
-        landed = df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
-        departed = df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
+      landed = df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
+      departed = df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
     
     # Groepeer de vluchten per luchthaven en tel het aantal vliegtuigen dat er nog is
-        landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
-        departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
+      landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
+      departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
 
     # Voeg de twee datasets samen en bereken het aantal vliegtuigen dat nog aanwezig is
-        airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
-        airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
+      airport_traffic = pd.merge(landed_count, departed_count, on='luchthaven', how='left').fillna(0)
+      airport_traffic['Aantal_vliegtuigen'] = airport_traffic['Aantal_vliegtuigen'] - airport_traffic['Aantal_vertrokken']
 
     # Voeg de coördinaten van de luchthavens toe
-        airports = df[['luchthaven', 'Latitude', 'Longitude']].drop_duplicates()
-        airport_traffic = airport_traffic.merge(airports, on='luchthaven')
+      airports = df[['luchthaven', 'Latitude', 'Longitude']].drop_duplicates()
+      airport_traffic = airport_traffic.merge(airports, on='luchthaven')
 
-        return airport_traffic
+      return airport_traffic
 
 # Maak een functie om de kaart te genereren, inclusief een heatmap
-    def create_aircraft_traffic_map(selected_time):
+  def create_aircraft_traffic_map(selected_time):
     # Bereken het aantal vliegtuigen op de luchthavens op de geselecteerde tijd
-        airport_traffic = calculate_aircraft_on_airport(selected_time)
+      airport_traffic = calculate_aircraft_on_airport(selected_time)
 
     # Maak de kaart met een centraal punt in Europa
-        traffic_map = folium.Map(location=[50, 10], zoom_start=4)
+      traffic_map = folium.Map(location=[50, 10], zoom_start=4)
 
     # Voeg markers toe aan de kaart voor elke luchthaven
-        for idx, row in airport_traffic.iterrows():
+      for idx, row in airport_traffic.iterrows():
         # Bepaal de grootte van de marker op basis van het aantal vliegtuigen
-            folium.CircleMarker(
-                location=[row['Latitude'], row['Longitude']],
-                radius=row['Aantal_vliegtuigen'] / 10,  # Maak de marker afhankelijk van het aantal vliegtuigen
-                color='red',  # Rode markers voor het aantal vliegtuigen op de luchthaven
-                fill=True,
-                fill_opacity=0.6,
-                tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
-            ).add_to(traffic_map)
+          folium.CircleMarker(
+              location=[row['Latitude'], row['Longitude']],
+              radius=row['Aantal_vliegtuigen'] / 10,  # Maak de marker afhankelijk van het aantal vliegtuigen
+              color='red',  # Rode markers voor het aantal vliegtuigen op de luchthaven
+              fill=True,
+              fill_opacity=0.6,
+              tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+          ).add_to(traffic_map)
 
     # Voeg heatmap toe gebaseerd op het aantal vliegtuigen op elke luchthaven
-        heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
-        HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
+      heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
+      HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
 
-        return traffic_map
+      return traffic_map
 
 # Streamlit-app
-    def main():
-        st.title("Interactieve Luchtvaartkaart")
+  def main():
+      st.subheader("Interactieve Luchtvaartkaart")
 
     # Datumselector
-        start_date = pd.to_datetime('2019-01-01')
-        end_date = pd.to_datetime('2020-12-31')
-        selected_day = st.date_input("Selecteer een datum", value=start_date)
+      start_date = pd.to_datetime('2019-01-01')
+      end_date = pd.to_datetime('2020-12-31')
+      selected_day = st.date_input("Selecteer een datum", value=start_date)
 
     # Controleer of de geselecteerde datum binnen het bereik ligt
-        if start_date <= pd.Timestamp(selected_day) <= end_date:
+      if start_date <= pd.Timestamp(selected_day) <= end_date:
         # Genereer de kaart voor de geselecteerde datum en tijd
-            selected_date_time = pd.Timestamp(selected_day)
-            traffic_map = create_aircraft_traffic_map(selected_date_time)
+          selected_date_time = pd.Timestamp(selected_day)
+          traffic_map = create_aircraft_traffic_map(selected_date_time)
         
         # Toon de kaart met st_folium
-            st.subheader(f"Luchtvaartverkeer op {selected_day}")
-            st_folium(traffic_map)  # Gebruik st_folium in plaats van folium_static
-        else:
-            st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
+          st.subheader(f"Luchtvaartverkeer op {selected_day}")
+          st_folium(traffic_map)  # Gebruik st_folium in plaats van folium_static
+      else:
+          st.warning("Selecteer een datum tussen 2019-01-01 en 2020-12-31.")
