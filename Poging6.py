@@ -1,16 +1,16 @@
-  import streamlit as st
-  from streamlit_option_menu import option_menu
-  import pandas as pd
-  import folium
-  import branca.colormap as cm
-  from streamlit_folium import st_folium
-  import plotly.express as px
+import streamlit as st
+from streamlit_option_menu import option_menu
+import pandas as pd
+import folium
+import branca.colormap as cm
+from streamlit_folium import st_folium
+import plotly.express as px
 
-  st.set_page_config(page_title='Case 3 Vluchten (groep 3)', page_icon='✈️')
+st.set_page_config(page_title='Case 3 Vluchten (groep 3)', page_icon='✈️')
 
 # sidebar
-  with st.sidebar: 
-    selected = option_menu(menu_title="Menu", options=["Intro", "Vluchten", "Luchthavens"], icons=["play", "airplane", "bezier"], menu_icon="list")
+with st.sidebar: 
+  selected = option_menu(menu_title="Menu", options=["Intro", "Vluchten", "Luchthavens"], icons=["play", "airplane", "bezier"], menu_icon="list")
 
 # --------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@
 
   # Dropdownmenu in Streamlit om de vlucht te selecteren
     selected_vlucht = st.selectbox("Selecteer een vlucht", options=[f'vlucht {i}' for i in range(1, 8)])
-    @st.cache_data
+
   # Haal de geselecteerde dataframe op
     df1 = vluchten_data[selected_vlucht]
 
