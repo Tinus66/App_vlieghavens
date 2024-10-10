@@ -468,12 +468,6 @@ if selected == 'Luchthavens':
     # Filter de gegevens op basis van de gekozen luchthaven en jaar
   filtered_data = df[(df['City'] == selected_airport) & (df['Jaartal'] == selected_year)]
 
-    # Controleer of er data beschikbaar is na de filtering
-  if filtered_data.empty:
-      st.write(f"Geen data beschikbaar voor {selected_airport} in {selected_year}")
-    return
-
-
     # Groepeer op maand en tel het aantal unieke vluchten (TAR) per maand
   flights_per_month = filtered_data.groupby(filtered_data['STD'].dt.month)['TAR'].nunique().reset_index()
   flights_per_month.columns = ['Maand', 'Aantal_vluchten']
