@@ -561,16 +561,16 @@ if selected == 'Luchthavens':
 from sklearn.linear_model import LinearRegression
  
 # Zet de 'STD' kolom om naar datetime
-  df['STD'] = pd.to_datetime(df['STD'], format='%Y-%m-%d')
+df['STD'] = pd.to_datetime(df['STD'], format='%Y-%m-%d')
  
 # Extraheer het jaar uit de datum
-  df['Year'] = df['STD'].dt.year
+df['Year'] = df['STD'].dt.year
  
 # Bereken het gemiddelde verschil in minuten per jaar per maatschappij
-  mean_diff_per_year_maatschappij = df.groupby(['Year', 'maatschappij'])['verschil_minuten'].mean().reset_index()
+mean_diff_per_year_maatschappij = df.groupby(['Year', 'maatschappij'])['verschil_minuten'].mean().reset_index()
  
 # Maak een lineair regressiemodel voor elke maatschappij
-  predictions = {}
+predictions = {}
   for maatschappij in mean_diff_per_year_maatschappij['maatschappij'].unique():
       subset = mean_diff_per_year_maatschappij[mean_diff_per_year_maatschappij['maatschappij'] == maatschappij]
     # Model trainen
