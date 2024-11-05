@@ -149,13 +149,6 @@ if selected == 'Luchthavens':
 #     'werkelijke_vertrek': [pd.Timestamp('2024-11-06 10:05'), pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 10:55'), pd.Timestamp('2024-11-06 11:10')],
 # })
 
-# Bereken de vertraging in minuten
-    df['vertraging_minuten'] = (df['verschil_minuten'])
-
-# Bepaal de status op basis van de vertraging
-    df['status'] = pd.cut(df['vertraging_minuten'],
-                      bins=[-float('inf'), 0, 1, float('inf')],
-                      labels=['Op tijd', 'Te laat', 'Te vroeg'])
 
     st.subheader("Luchthavens zijn optijd?")
 
@@ -180,7 +173,13 @@ if selected == 'Luchthavens':
 
 # Toon de plot in Streamlit
     st.plotly_chart(fig)
+# Bereken de vertraging in minuten
+    df['vertraging_minuten'] = (df['verschil_minuten'])
 
+# Bepaal de status op basis van de vertraging
+    df['status'] = pd.cut(df['vertraging_minuten'],
+                      bins=[-float('inf'), 0, 1, float('inf')],
+                      labels=['Op tijd', 'Te laat', 'Te vroeg'])
 # Voeg een checkbox toe voor de extra functionaliteiten
     show_extra_features = st.checkbox("Toon extra details")
 
