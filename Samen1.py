@@ -162,14 +162,14 @@ if selected == 'Luchthavens':
 # Groeperen per luchthaven en status
     grouped = df.groupby(['City', 'status']).size().unstack(fill_value=0)
 
-# Berekenen van het percentage per luchthaven
+    # Berekenen van het percentage per luchthaven
     grouped_percentage = grouped.div(grouped.sum(axis=1), axis=0) * 100
 
-# Voor plotly moeten we het DataFrame omzetten naar een lang formaat
+    # Voor plotly moeten we het DataFrame omzetten naar een lang formaat
     grouped_percentage_reset = grouped_percentage.reset_index().melt(id_vars='City', value_vars=['Te laat', 'Op tijd', 'Te vroeg'],
-                                                                 var_name='status', value_name='percentage')
+                                                                     var_name='status', value_name='percentage')
 
-# Maak een gestapelde bar plot met plotly express
+    # Maak een gestapelde bar plot met plotly express
     fig = px.bar(grouped_percentage_reset, x='City', y='percentage', color='status',
                  title='Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven',
                  labels={'percentage': 'Percentage (%)', 'City': 'ICAO'},
