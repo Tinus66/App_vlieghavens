@@ -150,7 +150,7 @@ if selected == 'Luchthavens':
 # })
 
 # Bereken de vertraging in minuten
-    df['vertraging_minuten'] = (df['werkelijke_vertrek'] - df['geplande_vertrek']).dt.total_seconds() / 60
+    df['vertraging_minuten'] = (df['verschil_minuten']
 
 # Bepaal de status op basis van de vertraging
     df['status'] = pd.cut(df['vertraging_minuten'],
