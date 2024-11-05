@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from folium.plugins import HeatMap
 
-st.set_page_config(page_title='Case 3 Vluchten (groep 3)', page_icon='✈️')
+st.set_page_config(page_title='Eindpresentatie visualisatie ', page_icon='✈️')
 
 # Sidebar met verbeterde menu-opties
 with st.sidebar: 
@@ -20,6 +20,26 @@ with st.sidebar:
         icons=["play", "airplane", "bezier"], 
         menu_icon="list"
     )
+
+# --------------------------------------------------------------------------
+
+# INTRO pagina
+if selected == 'Intro':
+    st.title("Eindpresnetatie visualisatie - Groep 3 ")
+
+    # Korte uitleg
+    st.write("""
+        Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekkozen voor het verbetren van case 3 de vluchten data. 
+    """)
+    st.write("Sophia Olijhoek en Martijn de Jong
+    # Bronnen
+    st.write("### Gebruikte Bronnen:")
+    st.write("""
+        - [Youtube filmpje](https://www.youtube.com/watch?v=hEPoto5xp3k)
+        - [Streamlit documentatie](https://docs.streamlit.io/)
+    """)
+
+# --------------------------------------------------------------------------
 
 # Functie voor laden van vluchten data
 @st.cache_data
