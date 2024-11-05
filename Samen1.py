@@ -31,7 +31,7 @@ if selected == 'Intro':
     st.write("""
         Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekkozen voor het verbetren van case 3 de vluchten data. 
     """)
-    st.write("Sophia Olijhoek en Martijn de Jong
+    st.write("Sophia Olijhoek en Martijn de Jong")
     # Bronnen
     st.write("### Gebruikte Bronnen:")
     st.write("""
