@@ -63,7 +63,7 @@ def draw_flight_map(df):
 
 # INTRO pagina
 if selected == 'Intro':
-    st.title("Eindpresnetatie visualisatie Groep 3 ")
+    st.title("Eindpresnetatie visualisatie")
 
     # Korte uitleg
     st.write("""
@@ -76,7 +76,7 @@ if selected == 'Intro':
         - [Youtube filmpje](https://www.youtube.com/watch?v=hEPoto5xp3k)
         - [Streamlit documentatie](https://docs.streamlit.io/)
     """)
-
+    st.image('intro.png', caption='Data science', use_column_width=True)
 # --------------------------------------------------------------------------
 
 # VLUCHTEN pagina
