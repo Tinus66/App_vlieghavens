@@ -25,7 +25,7 @@ with st.sidebar:
 
 # INTRO pagina
 if selected == 'Intro':
-    st.title("Eindpresnetatie visualisatie - Groep 3 ")
+    st.title("Eindpresnetatie visualisatie Groep 3 ")
 
     # Korte uitleg
     st.write("""
