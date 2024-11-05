@@ -20,27 +20,7 @@ with st.sidebar:
         icons=["play", "airplane", "bezier"], 
         menu_icon="list"
     )
-
-# --------------------------------------------------------------------------
-
-# INTRO pagina
-if selected == 'Intro':
-    st.title("Eindpresnetatie visualisatie Groep 3 ")
-
-    # Korte uitleg
-    st.write("""
-        Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekkozen voor het verbetren van case 3 de vluchten data. 
-    """)
-    st.write("Sophia Olijhoek en Martijn de Jong")
-    # Bronnen
-    st.write("### Gebruikte Bronnen:")
-    st.write("""
-        - [Youtube filmpje](https://www.youtube.com/watch?v=hEPoto5xp3k)
-        - [Streamlit documentatie](https://docs.streamlit.io/)
-    """)
-
-# --------------------------------------------------------------------------
-
+#---------------------------------------------------------------------------
 # Functie voor laden van vluchten data
 @st.cache_data
 def load_vluchten_data():
@@ -78,6 +58,26 @@ def draw_flight_map(df):
                   popup="BARCELONA (BCN)", tooltip="BARCELONA (BCN)").add_to(m)
     colormap.add_to(m)
     return m
+
+# --------------------------------------------------------------------------
+
+# INTRO pagina
+if selected == 'Intro':
+    st.title("Eindpresnetatie visualisatie Groep 3 ")
+
+    # Korte uitleg
+    st.write("""
+        Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekkozen voor het verbetren van case 3 de vluchten data. 
+    """)
+    st.write("Sophia Olijhoek en Martijn de Jong")
+    # Bronnen
+    st.write("### Gebruikte Bronnen:")
+    st.write("""
+        - [Youtube filmpje](https://www.youtube.com/watch?v=hEPoto5xp3k)
+        - [Streamlit documentatie](https://docs.streamlit.io/)
+    """)
+
+# --------------------------------------------------------------------------
 
 # VLUCHTEN pagina
 elif selected == "Vluchten": 
