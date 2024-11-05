@@ -135,29 +135,55 @@ if selected == 'Luchthavens':
     # Toon de grafiek
     st.plotly_chart(fig)
 
+
+# Zorg ervoor dat je DataFrame 'df' gedefinieerd is en klaar is voor gebruik
+
     st.subheader("Luchthavens zijn optijd?")
 
-    # Groeperen per luchthaven en status
+# Groeperen per luchthaven en status
     grouped = df.groupby(['City', 'status']).size().unstack(fill_value=0)
 
-    # Berekenen van het percentage per luchthaven
+# Berekenen van het percentage per luchthaven
     grouped_percentage = grouped.div(grouped.sum(axis=1), axis=0) * 100
 
-    # Voor plotly moeten we het DataFrame omzetten naar een lang formaat
+# Voor plotly moeten we het DataFrame omzetten naar een lang formaat
     grouped_percentage_reset = grouped_percentage.reset_index().melt(id_vars='City', value_vars=['Te laat', 'Op tijd', 'Te vroeg'],
-                                                                     var_name='status', value_name='percentage')
+                                                                 var_name='status', value_name='percentage')
 
-    # Maak een gestapelde bar plot met plotly express
+# Maak een gestapelde bar plot met plotly express
     fig = px.bar(grouped_percentage_reset, x='City', y='percentage', color='status',
                  title='Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven',
                  labels={'percentage': 'Percentage (%)', 'City': 'ICAO'},
                  color_discrete_map={'Te laat': 'red', 'Op tijd': 'green', 'Te vroeg': 'blue'})
 
-    # Pas de lay-out van de grafiek aan
+# Pas de lay-out van de grafiek aan
     fig.update_layout(barmode='stack', xaxis={'categoryorder': 'total descending'})
 
-    # Toon de plot in Streamlit
+# Toon de plot in Streamlit
     st.plotly_chart(fig)
+
+# Voeg een checkbox toe voor de extra functionaliteiten
+    show_extra_features = st.checkbox("Toon extra details")
+
+    if show_extra_features:
+    # Voeg percentages toe als tekst op de balken
+        fig.update_traces(texttemplate='%{y:.2f}%', textposition='inside', insidetextanchor='middle')
+
+    # Voeg een slider toe om het drempelpercentage voor op tijd aan te passen
+        tijd_drempel = st.slider("Stel het percentage voor een vlucht op tijd in (in %):", 0, 100, 80)
+
+    # Pas de plot aan op basis van het drempelpercentage
+        fig_drempel = px.bar(grouped_percentage_reset[grouped_percentage_reset['percentage'] >= tijd_drempel],
+                             x='City', y='percentage', color='status',
+                             title=f'Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven (vanaf {tijd_drempel}% op tijd)',
+                             labels={'percentage': 'Percentage (%)', 'City': 'ICAO'},
+                             color_discrete_map={'Te laat': 'red', 'Op tijd': 'green', 'Te vroeg': 'blue'})
+
+    # Pas de lay-out aan van de nieuwe grafiek
+        fig_drempel.update_layout(barmode='stack', xaxis={'categoryorder': 'total descending'})
+
+    # Toon de aangepaste grafiek in Streamlit
+        st.plotly_chart(fig_drempel)
 
 
 # Gemiddelde vertraging per luchthaven en jaar berekenen
