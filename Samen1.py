@@ -150,7 +150,7 @@ if selected == 'Luchthavens':
 # })
 
 # Bereken de vertraging in minuten
-    df['vertraging_minuten'] = (df['verschil_minuten']
+    df['vertraging_minuten'] = (df['verschil_minuten'])
 
 # Bepaal de status op basis van de vertraging
     df['status'] = pd.cut(df['vertraging_minuten'],
