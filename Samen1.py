@@ -138,6 +138,25 @@ if selected == 'Luchthavens':
 
 # Zorg ervoor dat je DataFrame 'df' gedefinieerd is en klaar is voor gebruik
 
+
+# Zorg ervoor dat je DataFrame 'df' gedefinieerd is en dat het kolommen 'geplande_vertrek' en 'werkelijke_vertrek' bevat
+
+# Voorbeeld van DataFrame opbouw
+# df = pd.DataFrame({
+#     'City': ['Amsterdam', 'Amsterdam', 'Rotterdam', 'Rotterdam'],
+#     'status': ['Te laat', 'Op tijd', 'Te vroeg', 'Te laat'],
+#     'geplande_vertrek': [pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 11:00'), pd.Timestamp('2024-11-06 11:00')],
+#     'werkelijke_vertrek': [pd.Timestamp('2024-11-06 10:05'), pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 10:55'), pd.Timestamp('2024-11-06 11:10')],
+# })
+
+# Bereken de vertraging in minuten
+    df['vertraging_minuten'] = (df['werkelijke_vertrek'] - df['geplande_vertrek']).dt.total_seconds() / 60
+
+# Bepaal de status op basis van de vertraging
+    df['status'] = pd.cut(df['vertraging_minuten'],
+                      bins=[-float('inf'), 0, 1, float('inf')],
+                      labels=['Op tijd', 'Te laat', 'Te vroeg'])
+
     st.subheader("Luchthavens zijn optijd?")
 
 # Groeperen per luchthaven en status
@@ -170,12 +189,26 @@ if selected == 'Luchthavens':
         fig.update_traces(texttemplate='%{y:.2f}%', textposition='inside', insidetextanchor='middle')
 
     # Voeg een slider toe om het drempelpercentage voor op tijd aan te passen
-        tijd_drempel = st.slider("Stel het percentage voor een vlucht op tijd in (in %):", 0, 100, 80)
+        tijd_drempel = st.slider("Stel het aantal minuten in voor een vlucht om als op tijd te worden beschouwd:", 0, 60, 5)
 
-    # Pas de plot aan op basis van het drempelpercentage
-        fig_drempel = px.bar(grouped_percentage_reset[grouped_percentage_reset['percentage'] >= tijd_drempel],
-                             x='City', y='percentage', color='status',
-                             title=f'Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven (vanaf {tijd_drempel}% op tijd)',
+    # Bepaal de nieuwe status op basis van de geselecteerde tijdsgrens
+        df['status'] = pd.cut(df['vertraging_minuten'],
+                              bins=[-float('inf'), 0, tijd_drempel, float('inf')],
+                              labels=['Op tijd', 'Te laat', 'Te vroeg'])
+
+    # Groeperen per luchthaven en status
+        grouped = df.groupby(['City', 'status']).size().unstack(fill_value=0)
+
+    # Berekenen van het percentage per luchthaven
+        grouped_percentage = grouped.div(grouped.sum(axis=1), axis=0) * 100
+
+    # Voor plotly moeten we het DataFrame omzetten naar een lang formaat
+        grouped_percentage_reset = grouped_percentage.reset_index().melt(id_vars='City', value_vars=['Te laat', 'Op tijd', 'Te vroeg'],
+                                                                         var_name='status', value_name='percentage')
+
+    # Maak een nieuwe gestapelde bar plot met de aangepaste drempel
+        fig_drempel = px.bar(grouped_percentage_reset, x='City', y='percentage', color='status',
+                             title=f'Percentage vluchten die te laat, op tijd of te vroeg zijn per luchthaven (drempel: {tijd_drempel} minuten)',
                              labels={'percentage': 'Percentage (%)', 'City': 'ICAO'},
                              color_discrete_map={'Te laat': 'red', 'Op tijd': 'green', 'Te vroeg': 'blue'})
 
