@@ -79,14 +79,6 @@ def draw_flight_map(df):
     colormap.add_to(m)
     return m
 
-# INTRO pagina
-if selected == 'Intro':
-    st.title("Case 3 Vluchten - Groep 3")
-    st.write("Welkom bij het vluchten dashboard. Hier krijg je inzicht in vluchtgegevens en luchthavendata.")
-    st.write("### Gebruikte Bronnen:")
-    st.write("- [Youtube filmpje](https://www.youtube.com/watch?v=hEPoto5xp3k)")
-    st.write("- [Streamlit documentatie](https://docs.streamlit.io/)")
-
 # VLUCHTEN pagina
 elif selected == "Vluchten": 
     st.title("7 Vluchten (AMS - BCN)") 
