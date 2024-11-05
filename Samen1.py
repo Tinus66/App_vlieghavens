@@ -178,42 +178,46 @@ if selected == 'Luchthavens':
     max_vertraging = max(gemiddelde_vertraging['verschil_minuten'].max(), 0)
     min_vertraging = min(gemiddelde_vertraging['verschil_minuten'].min(), 0)
 
-# Bar plot voor 2019
-    fig_2019 = px.bar(
-        df_2019,
-        x='City',
-        y='verschil_minuten',
-        title='Gemiddelde vertraging van vluchten per luchthaven in 2019 (in minuten)',
-        labels={'City': 'ICAO', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
-        color='verschil_minuten',
-        text='aantal_vluchten',  # Aantal vluchten als tekstlabel
-        color_continuous_scale=px.colors.sequential.Viridis
-    )
+# Dropdown menu voor het jaar
+    jaartal = st.selectbox("Kies een jaar:", [2019, 2020])
 
-# Y-as instellen voor 2019
-    fig_2019.update_yaxes(range=[min_vertraging, max_vertraging])
+# Conditie voor het maken van de grafiek op basis van het gekozen jaar
+    if jaartal == 2019:
+        # Bar plot voor 2019
+        fig_jaartal = px.bar(
+            df_2019,
+            x='City',
+            y='verschil_minuten',
+            title='Gemiddelde vertraging van vluchten per luchthaven in 2019 (in minuten)',
+            labels={'City': 'ICAO', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
+            color='verschil_minuten',
+            text='aantal_vluchten',  # Aantal vluchten als tekstlabel
+            color_continuous_scale=px.colors.sequential.Viridis
+        )
 
-# Bar plot voor 2020
-    fig_2020 = px.bar(
-        df_2020,
-        x='City',
-        y='verschil_minuten',
-        title='Gemiddelde vertraging van vluchten per luchthaven in 2020 (in minuten)',
-        labels={'City': 'Luchthaven', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
-        color='verschil_minuten',
-        text='aantal_vluchten',  # Aantal vluchten als tekstlabel
-        color_continuous_scale=px.colors.sequential.Viridis
-    )
+    # Y-as instellen voor 2019
+        fig_jaartal.update_yaxes(range=[min_vertraging, max_vertraging])
+        st.plotly_chart(fig_jaartal)
 
-# Y-as instellen voor 2020
-    fig_2020.update_yaxes(range=[min_vertraging, max_vertraging])
+    elif jaartal == 2020:
+    # Bar plot voor 2020
+        fig_jaartal = px.bar(
+            df_2020,
+            x='City',
+            y='verschil_minuten',
+            title='Gemiddelde vertraging van vluchten per luchthaven in 2020 (in minuten)',
+            labels={'City': 'Luchthaven', 'verschil_minuten': 'Gemiddelde vertraging (minuten)'},
+            color='verschil_minuten',
+            text='aantal_vluchten',  # Aantal vluchten als tekstlabel
+            color_continuous_scale=px.colors.sequential.Viridis
+        )
 
-# Plotten van beide figuren in Streamlit
-    st.plotly_chart(fig_2019)
-    st.plotly_chart(fig_2020)
+    # Y-as instellen voor 2020
+        fig_jaartal.update_yaxes(range=[min_vertraging, max_vertraging])
+        st.plotly_chart(fig_jaartal)
 
+# Subheader voor drukte op luchthavens
     st.subheader("Drukte op luchthavens in de tijd")
-
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
     def calculate_aircraft_on_airport(selected_time):
     # Zorg ervoor dat de STD-kolom correct is geformatteerd als datetime
