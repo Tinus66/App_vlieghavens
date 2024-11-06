@@ -224,7 +224,26 @@ if selected == "Vluchten":
 
 # Toon de grafiek in Streamlit
     st.plotly_chart(fig)
+#----------------------------------------------------------------------------------------------
+# Laad de gegevens in een dictionary van dataframes
 
+# Voeg een checkbox toe om te wisselen tussen hoogte en snelheid
+    show_speed = st.checkbox("Toon snelheid in plaats van hoogte", key="speed_checkbox")
+
+# Concateneer alle vluchten in één dataframe met een kolom om de vlucht te labelen
+    df_all = pd.concat([df.assign(vlucht=vlucht) for vlucht, df in vluchten_data.items()], ignore_index=True)
+
+# Selecteer de kolomnaam op basis van de checkbox
+    y_axis_column = 'TRUE AIRSPEED (derived)' if show_speed else '[3d Altitude Ft]'
+    y_axis_label = 'Snelheid (knopen)' if show_speed else 'Hoogte (ft)'
+
+# Maak een boxplot
+    fig = px.box(df_all, x='vlucht', y=y_axis_column, 
+                 title=f"{y_axis_label} per vlucht",
+                 labels={"vlucht": "Vlucht", y_axis_column: y_axis_label})
+
+# Toon de grafiek in Streamlit
+    st.plotly_chart(fig)
 #-----------------------------------------------------------------------------------------------    
 if selected == 'Luchthavens':
     st.title("Luchthavens")
