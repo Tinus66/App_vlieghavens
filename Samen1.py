@@ -175,10 +175,14 @@ if selected == "Vluchten":
 
   # --------------------------------------
 
-  # Voeg 'ALL' toe aan de opties voor het dropdownmenu
+ # Voeg 'ALL' toe aan de opties voor het dropdownmenu
     selected_vlucht = st.selectbox("Selecteer een vlucht", options=['ALL'] + [f'vlucht {i}' for i in range(1, 8)])
 
-  # Als 'ALL' is geselecteerd, combineer de data van alle vluchten en voeg een kolom toe om de vlucht te labelen
+# Checkbox om te schakelen tussen hoogte en snelheid
+    show_speed = st.checkbox("Toon snelheid in plaats van hoogte")
+
+
+# Als 'ALL' is geselecteerd, combineer de data van alle vluchten en voeg een kolom toe om de vlucht te labelen
     if selected_vlucht == 'ALL':
         df_all = pd.concat([df.assign(vlucht=vlucht) for vlucht, df in vluchten_data.items()], ignore_index=True)
         df1 = df_all
@@ -186,10 +190,10 @@ if selected == "Vluchten":
         df1 = vluchten_data[selected_vlucht]
         df1['vlucht'] = selected_vlucht  # Voeg een kolom toe om de vlucht te labelen
 
-  # Tijd omzetten van seconden naar uren
+# Tijd omzetten van seconden naar uren
     df1['Time (hours)'] = df1['Time (secs)'] / 3600
 
-  # Specifieke kleuren toewijzen aan elke vlucht
+# Specifieke kleuren toewijzen aan elke vlucht
     kleuren_map = {
         'vlucht 1': 'red',
         'vlucht 2': 'green',
@@ -200,15 +204,25 @@ if selected == "Vluchten":
         'vlucht 7': 'pink'
     }
 
-  # Maak de lijnplot met verschillende kleuren per vlucht
-    fig = px.line(df1, x='Time (hours)', y='[3d Altitude Ft]', 
-                  title='Hoogte vs Tijd',  
-                  labels={"Time (hours)": "Tijd (uren)", "[3d Altitude Ft]": "Hoogte (ft)"},
-                  color='vlucht',  
-                  color_discrete_map=kleuren_map  
-                 )
+# Controleer of we hoogte of snelheid moeten tonen
+    y_value = 'TRUE AIRSPEED (derived)' if show_speed else '[3d Altitude Ft]'
+    y_label = "Snelheid (knots)" if show_speed else "Hoogte (ft)"
 
-  # Toon de grafiek in Streamlit
+# Zorg dat de kolom numeriek is, voor het geval er niet-numerieke waarden zijn
+    df1[y_value] = pd.to_numeric(df1[y_value], errors='coerce')
+
+# Maak de lijnplot met verschillende kleuren per vlucht
+    fig = px.line(
+        df1, 
+        x='Time (hours)', 
+        y=y_value,
+        title=f'{y_label} vs Tijd',  
+        labels={"Time (hours)": "Tijd (uren)", y_value: y_label},
+        color='vlucht',  
+        color_discrete_map=kleuren_map  
+    )
+
+# Toon de grafiek in Streamlit
     st.plotly_chart(fig)
 
 #-----------------------------------------------------------------------------------------------    
