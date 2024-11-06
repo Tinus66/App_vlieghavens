@@ -68,7 +68,7 @@ if selected == 'Intro':
 
     # Korte uitleg
     st.write("""
-        Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekkozen voor het verbetren van case 3 de vluchten data. 
+        Eindpresentaie, laten zien van de vooruitgang in onze visualisatie kunsten. Wij hebben gekozen voor het verbetren van case 3 de vluchten data. 
     """)
     st.write("Sophia Olijhoek en Martijn de Jong")
     # Bronnen
@@ -228,7 +228,7 @@ if selected == "Vluchten":
 # Laad de gegevens in een dictionary van dataframes
 
 # Voeg een checkbox toe om te wisselen tussen hoogte en snelheid
-    show_speed = st.checkbox("Toon snelheid in plaats van hoogte", key="speed_checkbox")
+    show_speed = st.checkbox("Toon snelheid in plaats van hoogte", key="speed_checkboxx")
 
 # Concateneer alle vluchten in één dataframe met een kolom om de vlucht te labelen
     df_all = pd.concat([df.assign(vlucht=vlucht) for vlucht, df in vluchten_data.items()], ignore_index=True)
