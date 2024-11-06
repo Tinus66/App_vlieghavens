@@ -279,7 +279,32 @@ if selected == 'Luchthavens':
 
 
 # Zorg ervoor dat je DataFrame 'df' gedefinieerd is en klaar is voor gebruik
+# Groeperen per luchthaven en berekenen van het aantal vluchten
+    luchthaven_counts = df.groupby('City').size().reset_index(name='Totaal aantal vluchten')
 
+# Sorteren op aantal vluchten, van hoog naar laag
+    luchthaven_counts_sorted = luchthaven_counts.sort_values(by='Totaal aantal vluchten', ascending=False).reset_index(drop=True)
+
+# Streamlit Titel
+    st.subheader("Populairste en Minst Populaire Luchthavens")
+
+# Toon de matrix in Streamlit
+    st.write("### Luchthaven Matrix op basis van Totaal Aantal Vluchten")
+    st.dataframe(luchthaven_counts_sorted)
+
+# Populairste en minst populaire luchthaven
+    populairste_luchthaven = luchthaven_counts_sorted.iloc[0]
+    minst_populaire_luchthaven = luchthaven_counts_sorted.iloc[-1]
+
+# Display populairste luchthaven
+    st.write("### Populairste Luchthaven")
+    st.write(f"Luchthaven: {populairste_luchthaven['City']}")
+    st.write(f"Totaal aantal vluchten: {populairste_luchthaven['Totaal aantal vluchten']}")
+
+# Display minst populaire luchthaven
+    st.write("### Minst Populaire Luchthaven")
+    st.write(f"Luchthaven: {minst_populaire_luchthaven['City']}")
+    st.write(f"Totaal aantal vluchten: {minst_populaire_luchthaven['Totaal aantal vluchten']}")
 
 # Zorg ervoor dat je DataFrame 'df' gedefinieerd is en dat het kolommen 'geplande_vertrek' en 'werkelijke_vertrek' bevat
 
