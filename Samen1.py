@@ -81,10 +81,6 @@ if selected == 'Intro':
 # --------------------------------------------------------------------------
 
 # VLUCHTEN pagina
-import streamlit as st
-import pandas as pd
-import folium
-import branca.colormap as cm
 
 if selected == "Vluchten": 
     st.title("7 Vluchten (AMS - BCN)")
@@ -260,10 +256,10 @@ if selected == 'Luchthavens':
     # Maak een bar plot van de 20 meest voorkomende luchthavens met Plotly
     fig = px.bar(
         luchthaven_frequentie,
-        x='luchthaven',
+        x='ICAO',
         y='aantal_vluchten',
         title='Top 20 Meest Voorkomende Luchthavens',
-        labels={'luchthaven': 'luchthaven', 'aantal_vluchten': 'Aantal Vluchten'},
+        labels={'ICAO': 'ICAO', 'aantal_vluchten': 'Aantal Vluchten'},
         color_discrete_sequence=['blue']  # Maak alle bars blauw
     )
 
