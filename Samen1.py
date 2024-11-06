@@ -237,10 +237,14 @@ if selected == "Vluchten":
     y_axis_column = 'TRUE AIRSPEED (derived)' if show_speed else '[3d Altitude Ft]'
     y_axis_label = 'Snelheid (knopen)' if show_speed else 'Hoogte (ft)'
 
-# Maak een boxplot
+    color_sequence = ['red', 'green', 'blue', 'orange', 'purple', 'brown', 'pink']
+
+# Maak de boxplot met verschillende kleuren per vlucht
     fig = px.box(df_all, x='vlucht', y=y_axis_column, 
                  title=f"{y_axis_label} per vlucht",
-                 labels={"vlucht": "Vlucht", y_axis_column: y_axis_label})
+                 labels={"vlucht": "Vlucht", y_axis_column: y_axis_label},
+                 color='vlucht',
+                 color_discrete_sequence=color_sequence)
 
 # Toon de grafiek in Streamlit
     st.plotly_chart(fig)
