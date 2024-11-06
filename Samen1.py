@@ -81,6 +81,11 @@ if selected == 'Intro':
 # --------------------------------------------------------------------------
 
 # VLUCHTEN pagina
+import streamlit as st
+import pandas as pd
+import folium
+import branca.colormap as cm
+
 if selected == "Vluchten": 
     st.title("7 Vluchten (AMS - BCN)")
 
@@ -104,16 +109,18 @@ if selected == "Vluchten":
     # Checkbox om te schakelen tussen hoogte en snelheid
     show_speed = st.checkbox("Toon snelheid in plaats van hoogte")
 
-    # Maak een lijst van coördinaten (Latitude, Longitude) en hoogte of snelheid afhankelijk van de checkbox
+    # Zorg dat de kolom numeriek is en verwijder eventuele niet-numerieke waarden
     if show_speed:
-        values = df1['TRUE AIRSPEED (derived)']
+        df1['TRUE AIRSPEED (derived)'] = pd.to_numeric(df1['TRUE AIRSPEED (derived)'], errors='coerce')
+        values = df1['TRUE AIRSPEED (derived)'].dropna()  # Verwijder NaN waarden
         colormap = cm.LinearColormap(colors=['yellow', 'green', 'blue', 'purple'], 
                                      index=[0, 200, 400, 600],
                                      vmin=values.min(), 
                                      vmax=values.max(),
                                      caption='Snelheid in knots')
     else:
-        values = df1['[3d Altitude Ft]']
+        df1['[3d Altitude Ft]'] = pd.to_numeric(df1['[3d Altitude Ft]'], errors='coerce')
+        values = df1['[3d Altitude Ft]'].dropna()  # Verwijder NaN waarden
         colormap = cm.LinearColormap(colors=['yellow', 'green', 'turquoise', 'blue', 'purple'], 
                                      index=[0, 10000, 20000, 30000, 40000],
                                      vmin=values.min(), 
@@ -165,6 +172,7 @@ if selected == "Vluchten":
 
     # Weergave van de kaart in Streamlit
     st_folium(m, width=700, height=600)
+
   # --------------------------------------
 
   # Voeg 'ALL' toe aan de opties voor het dropdownmenu
