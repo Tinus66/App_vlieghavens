@@ -81,11 +81,10 @@ if selected == 'Intro':
 # --------------------------------------------------------------------------
 
 # VLUCHTEN pagina
-# Vluchten pagina
 if selected == "Vluchten": 
-    st.title("7 Vluchten (AMS - BCN)") 
+    st.title("7 Vluchten (AMS - BCN)")
 
-  # Laad de 7 Excel-bestanden in een dictionary
+    # Laad de 7 Excel-bestanden in een dictionary
     vluchten_data = {
         'vlucht 1': pd.read_excel('30Flight 1.xlsx'),
         'vlucht 2': pd.read_excel('cleaned_30Flight 2.xlsx'),
@@ -96,66 +95,76 @@ if selected == "Vluchten":
         'vlucht 7': pd.read_excel('30Flight 7.xlsx')
     }
 
-  # Dropdownmenu in Streamlit om de vlucht te selecteren
+    # Dropdownmenu in Streamlit om de vlucht te selecteren
     selected_vlucht = st.selectbox("Selecteer een vlucht", options=[f'vlucht {i}' for i in range(1, 8)])
 
-  # Haal de geselecteerde dataframe op
+    # Haal de geselecteerde dataframe op
     df1 = vluchten_data[selected_vlucht]
 
-  # Maak een lijst van coördinaten (Latitude, Longitude) en de hoogte
-    coordinates = list(zip(df1['[3d Latitude]'], df1['[3d Longitude]'], df1['[3d Altitude Ft]']))
+    # Checkbox om te schakelen tussen hoogte en snelheid
+    show_speed = st.checkbox("Toon snelheid in plaats van hoogte")
 
-  # Bereken het gemiddelde van de latitude en longitude om het midden van de vlucht te vinden
+    # Maak een lijst van coördinaten (Latitude, Longitude) en hoogte of snelheid afhankelijk van de checkbox
+    if show_speed:
+        values = df1['TRUE AIRSPEED (derived)']
+        colormap = cm.LinearColormap(colors=['yellow', 'green', 'blue', 'purple'], 
+                                     index=[0, 200, 400, 600],
+                                     vmin=values.min(), 
+                                     vmax=values.max(),
+                                     caption='Snelheid in knots')
+    else:
+        values = df1['[3d Altitude Ft]']
+        colormap = cm.LinearColormap(colors=['yellow', 'green', 'turquoise', 'blue', 'purple'], 
+                                     index=[0, 10000, 20000, 30000, 40000],
+                                     vmin=values.min(), 
+                                     vmax=values.max(),
+                                     caption='Hoogte in ft')
+
+    # Bereken het gemiddelde van de latitude en longitude om het midden van de vlucht te vinden
     mid_lat = df1['[3d Latitude]'].mean()
     mid_lon = df1['[3d Longitude]'].mean()
 
-  # Creëer een Folium-kaart gecentreerd op het midden van de vlucht
+    # Creëer een Folium-kaart gecentreerd op het midden van de vlucht
     m = folium.Map(location=[mid_lat, mid_lon], zoom_start=5, tiles='CartoDB positron')
 
-  # Creëer een colormap op basis van hoogte (gebaseerd op de gevraagde kleuren)
-    colormap = cm.LinearColormap(colors=['yellow', 'green', 'turquoise', 'blue', 'purple'], 
-                               index=[0, 10000, 20000, 30000, 40000],
-                               vmin=df1['[3d Altitude Ft]'].min(), 
-                               vmax=df1['[3d Altitude Ft]'].max(),
-                               caption='Hoogte in ft.')
+    # Voeg de lijn toe, waarbij de kleur afhangt van hoogte of snelheid
+    coordinates = list(zip(df1['[3d Latitude]'], df1['[3d Longitude]'], values))
 
-  # Voeg de lijn toe, waarbij de kleur afhangt van de hoogte
     for i in range(1, len(coordinates)):
         start = coordinates[i-1]
         end = coordinates[i]
-    
-      # Kleur gebaseerd op de hoogte
-        color = colormap(start[2])  # De derde waarde in 'coordinates' is de hoogte
-    
-      # Voeg polyline toe van het vorige naar het volgende punt met een tooltip voor extra informatie
+        
+        # Kleur gebaseerd op hoogte of snelheid afhankelijk van de checkbox
+        color = colormap(start[2])  # De derde waarde in 'coordinates' is de hoogte of snelheid
+        
+        # Voeg polyline toe van het vorige naar het volgende punt met tooltip voor extra informatie
         folium.PolyLine(
             locations=[[start[0], start[1]], [end[0], end[1]]],
             color=color, 
             weight=2.5, 
             opacity=1,
-            tooltip=f"Time: {df1['Time (secs)'].iloc[i]} sec, Altitude: {df1['[3d Altitude Ft]'].iloc[i]} ft, Speed: {df1['TRUE AIRSPEED (derived)'].iloc[i]}"
+            tooltip=f"Time: {df1['Time (secs)'].iloc[i]} sec, {'Speed' if show_speed else 'Altitude'}: {start[2]:.2f} {'knots' if show_speed else 'ft'}"
         ).add_to(m)
 
-  # Voeg een marker toe voor het vertrek vliegveld (AMS - Amsterdam)
+    # Voeg een marker toe voor het vertrek vliegveld (AMS - Amsterdam)
     folium.Marker(
         location=[df1['[3d Latitude]'].iloc[0], df1['[3d Longitude]'].iloc[0]],
         popup="AMSTERDAM (AMS)",
         tooltip="AMSTERDAM (AMS)"
     ).add_to(m)
 
-  # Voeg een marker toe voor het aankomst vliegveld (BCN - Barcelona)
+    # Voeg een marker toe voor het aankomst vliegveld (BCN - Barcelona)
     folium.Marker(
         location=[df1['[3d Latitude]'].iloc[-1], df1['[3d Longitude]'].iloc[-1]],
         popup="BARCELONA (BCN)",
         tooltip="BARCELONA (BCN)"
     ).add_to(m)
 
-  # Toon de colormap als legenda op de kaart
+    # Toon de colormap als legenda op de kaart
     colormap.add_to(m)
 
-  # Weergave van de kaart in Streamlit
+    # Weergave van de kaart in Streamlit
     st_folium(m, width=700, height=600)
-
   # --------------------------------------
 
   # Voeg 'ALL' toe aan de opties voor het dropdownmenu
