@@ -81,7 +81,7 @@ if selected == 'Intro':
 
 # VLUCHTEN pagina
 # Vluchten pagina
-  if selected == "Vluchten": 
+if selected == "Vluchten": 
     st.title("7 Vluchten (AMS - BCN)") 
 
   # Laad de 7 Excel-bestanden in een dictionary
