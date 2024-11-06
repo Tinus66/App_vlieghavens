@@ -583,7 +583,7 @@ if selected == 'Luchthavens':
 
 # Weergeef de kaart
     st.components.v1.html(traffic_map._repr_html_(), width=700, height=500)
-    )
+    
 
 # Streamlit-app
     def main():
