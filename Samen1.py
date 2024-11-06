@@ -285,37 +285,28 @@ if selected == 'Luchthavens':
 # Sorteren op aantal vluchten, van hoog naar laag
     luchthaven_counts_sorted = luchthaven_counts.sort_values(by='Totaal aantal vluchten', ascending=False).reset_index(drop=True)
 
-# Streamlit Titel
-    st.subheader("Populairste en Minst Populaire Luchthavens")
-
-# Toon de matrix in Streamlit
-    st.write("### Luchthaven Matrix op basis van Totaal Aantal Vluchten")
-    st.dataframe(luchthaven_counts_sorted)
-
 # Populairste en minst populaire luchthaven
     populairste_luchthaven = luchthaven_counts_sorted.iloc[0]
     minst_populaire_luchthaven = luchthaven_counts_sorted.iloc[-1]
 
-# Display populairste luchthaven
-    st.write("### Populairste Luchthaven")
-    st.write(f"Luchthaven: {populairste_luchthaven['City']}")
-    st.write(f"Totaal aantal vluchten: {populairste_luchthaven['Totaal aantal vluchten']}")
+# Streamlit Titel
+    st.subheader("Luchthaven Vlucht Populariteit")
 
-# Display minst populaire luchthaven
-    st.write("### Minst Populaire Luchthaven")
-    st.write(f"Luchthaven: {minst_populaire_luchthaven['City']}")
-    st.write(f"Totaal aantal vluchten: {minst_populaire_luchthaven['Totaal aantal vluchten']}")
+# Metrics voor populairste luchthaven
+    st.metric(
+        label="Populairste Luchthaven",
+        value=populairste_luchthaven['City'],
+        delta=f"Totaal vluchten: {populairste_luchthaven['Totaal aantal vluchten']}"
+    )
+
+# Metrics voor minst populaire luchthaven
+    st.metric(
+        label="Minst Populaire Luchthaven",
+        value=minst_populaire_luchthaven['City'],
+        delta=f"Totaal vluchten: {minst_populaire_luchthaven['Totaal aantal vluchten']}"
+    )
 
 # Zorg ervoor dat je DataFrame 'df' gedefinieerd is en dat het kolommen 'geplande_vertrek' en 'werkelijke_vertrek' bevat
-
-# Voorbeeld van DataFrame opbouw
-# df = pd.DataFrame({
-#     'City': ['Amsterdam', 'Amsterdam', 'Rotterdam', 'Rotterdam'],
-#     'status': ['Te laat', 'Op tijd', 'Te vroeg', 'Te laat'],
-#     'geplande_vertrek': [pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 11:00'), pd.Timestamp('2024-11-06 11:00')],
-#     'werkelijke_vertrek': [pd.Timestamp('2024-11-06 10:05'), pd.Timestamp('2024-11-06 10:00'), pd.Timestamp('2024-11-06 10:55'), pd.Timestamp('2024-11-06 11:10')],
-# })
-
 
     st.subheader("Luchthavens zijn optijd?")
 
