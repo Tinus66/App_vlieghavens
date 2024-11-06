@@ -494,20 +494,26 @@ if selected == 'Luchthavens':
         st.plotly_chart(fig)
 
 #--------------------------------------------------------------------------------------
+
+# Voeg een checkbox toe
     st.subheader("Hittekaart Europa")
+
+# Checkbox om te wisselen tussen relatieve en absolute drukte
+    absolute_checkbox = st.checkbox("Toon absolute drukte")
+
 # Zorg ervoor dat de coördinaten numeriek zijn
     df['Latitude'] = df['Latitude'].astype(str).str.replace(',', '.').astype(float)
     df['Longitude'] = df['Longitude'].astype(str).str.replace(',', '.').astype(float)
 
 # Voeg een nieuwe kolom toe voor de tijdstippen van de gebeurtenissen
     df['STD'] = pd.to_datetime(df['STD'])  # Zorg dat STD als datetime is
-
+    
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
     def calculate_aircraft_on_airport(selected_time):
     # Filter de data voor alle vluchten die al geland zijn, maar nog niet vertrokken op het gekozen tijdstip
         landed = df[(df['LSV'] == 'L') & (df['STD'] <= selected_time)]
         departed = df[(df['LSV'] == 'S') & (df['STD'] <= selected_time)]
-    
+
     # Groepeer de vluchten per luchthaven en tel het aantal vliegtuigen dat er nog is
         landed_count = landed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vliegtuigen')
         departed_count = departed.groupby('luchthaven')['TAR'].nunique().reset_index(name='Aantal_vertrokken')
@@ -520,33 +526,52 @@ if selected == 'Luchthavens':
         airports = df[['luchthaven', 'Latitude', 'Longitude']].drop_duplicates()
         airport_traffic = airport_traffic.merge(airports, on='luchthaven')
 
+    # Voeg een kolom toe voor absolute drukte (aantal vluchten)
+        airport_traffic['Absolute_vluchten'] = landed.groupby('luchthaven')['TAR'].count().values
+
         return airport_traffic
 
 # Maak een functie om de kaart te genereren, inclusief een heatmap
-    def create_aircraft_traffic_map(selected_time):
+    def create_aircraft_traffic_map(selected_time, absolute_mode=False):
     # Bereken het aantal vliegtuigen op de luchthavens op de geselecteerde tijd
         airport_traffic = calculate_aircraft_on_airport(selected_time)
+
+    # Kies welke kolom als basis voor de heatmap wordt gebruikt
+        if absolute_mode:
+            marker_column = 'Absolute_vluchten'
+        else:
+            marker_column = 'Aantal_vliegtuigen'
 
     # Maak de kaart met een centraal punt in Europa
         traffic_map = folium.Map(location=[50, 10], zoom_start=4)
 
     # Voeg markers toe aan de kaart voor elke luchthaven
         for idx, row in airport_traffic.iterrows():
-        # Bepaal de grootte van de marker op basis van het aantal vliegtuigen
+        # Bepaal de grootte van de marker op basis van het aantal vluchten
             folium.CircleMarker(
                 location=[row['Latitude'], row['Longitude']],
-                radius=row['Aantal_vliegtuigen'] / 10,  # Maak de marker afhankelijk van het aantal vliegtuigen
-                color='red',  # Rode markers voor het aantal vliegtuigen op de luchthaven
+                radius=row[marker_column] / 10,  # Maak de marker afhankelijk van het aantal vluchten
+                color='red',
                 fill=True,
                 fill_opacity=0.6,
-                tooltip=f"Luchthaven: {row['luchthaven']}, Aantal vliegtuigen: {row['Aantal_vliegtuigen']}"
+                tooltip=f"Luchthaven: {row['luchthaven']}, Aantal: {row[marker_column]}"
             ).add_to(traffic_map)
 
-    # Voeg heatmap toe gebaseerd op het aantal vliegtuigen op elke luchthaven
-        heat_data = [[row['Latitude'], row['Longitude'], row['Aantal_vliegtuigen']] for idx, row in airport_traffic.iterrows()]
+    # Voeg heatmap toe gebaseerd op de gekozen data (relatief of absoluut)
+        heat_data = [[row['Latitude'], row['Longitude'], row[marker_column]] for idx, row in airport_traffic.iterrows()]
         HeatMap(heat_data, radius=15, blur=10, max_zoom=1).add_to(traffic_map)
 
         return traffic_map
+
+# Selecteer een tijdstip voor de kaartweergave
+    selected_time = st.slider("Selecteer tijdstip", min_value=pd.Timestamp("2023-01-01"), max_value=pd.Timestamp("2023-12-31"), value=pd.Timestamp("2023-06-01"))
+
+# Genereer de kaart op basis van de selectie van absolute of relatieve drukte
+    traffic_map = create_aircraft_traffic_map(selected_time, absolute_mode=absolute_checkbox)
+
+# Weergeef de kaart
+    st.components.v1.html(traffic_map._repr_html_(), width=700, height=500)
+
 
 # Streamlit-app
     def main():
