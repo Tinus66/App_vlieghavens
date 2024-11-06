@@ -450,7 +450,8 @@ if selected == 'Luchthavens':
         st.plotly_chart(fig)
 
 # Aanroepen van de slider grafiek
-
+    if st.checkbox("Toon interactieve grafiek met slider"):
+        create_aircraft_slider_plot()
 
 #--------------------------------------------------------------------------------------
 # Filterfunctie voor jaar
