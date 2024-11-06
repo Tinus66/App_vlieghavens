@@ -544,7 +544,7 @@ if selected == 'Luchthavens':
             scale_factor = 0.001  # Lagere schaalfactor voor absolute aantallen
         else:
             marker_column = 'Aantal_vliegtuigen'
-            scale_factor = 0.1  # Hogere schaalfactor voor relatieve aantallen
+            scale_factor = 0.15  # Hogere schaalfactor voor relatieve aantallen
 
     # Maak de kaart met een centraal punt in Europa
         traffic_map = folium.Map(location=[50, 10], zoom_start=4)
