@@ -179,7 +179,7 @@ if selected == "Vluchten":
     selected_vlucht = st.selectbox("Selecteer een vlucht", options=['ALL'] + [f'vlucht {i}' for i in range(1, 8)])
 
 # Checkbox om te schakelen tussen hoogte en snelheid
-    show_speed = st.checkbox("Toon snelheid in plaats van hoogte")
+    show_speed = st.checkbox("Toon snelheid in plaats van hoogte", key="speed_checkbox")
 
 
 # Als 'ALL' is geselecteerd, combineer de data van alle vluchten en voeg een kolom toe om de vlucht te labelen
