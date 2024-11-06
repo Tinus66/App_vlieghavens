@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from folium.plugins import HeatMap
+import datetime
 
 st.set_page_config(page_title='Eindpresentatie visualisatie ', page_icon='✈️')
 
@@ -495,6 +496,8 @@ if selected == 'Luchthavens':
 
 #--------------------------------------------------------------------------------------
 
+
+
 # Voeg een checkbox toe
     st.subheader("Hittekaart Europa")
 
@@ -507,7 +510,7 @@ if selected == 'Luchthavens':
 
 # Voeg een nieuwe kolom toe voor de tijdstippen van de gebeurtenissen
     df['STD'] = pd.to_datetime(df['STD'])  # Zorg dat STD als datetime is
-    
+
 # Bereken het aantal vliegtuigen op elke luchthaven op een bepaald moment
     def calculate_aircraft_on_airport(selected_time):
     # Filter de data voor alle vluchten die al geland zijn, maar nog niet vertrokken op het gekozen tijdstip
@@ -564,14 +567,21 @@ if selected == 'Luchthavens':
         return traffic_map
 
 # Selecteer een tijdstip voor de kaartweergave
-    selected_time = st.slider("Selecteer tijdstip", min_value=pd.Timestamp("2023-01-01"), max_value=pd.Timestamp("2023-12-31"), value=pd.Timestamp("2023-06-01"))
+    selected_time = st.slider(
+        "Selecteer tijdstip", 
+        min_value=datetime.date(2023, 1, 1), 
+        max_value=datetime.date(2023, 12, 31), 
+        value=datetime.date(2023, 6, 1)
+    )
+
+# Converteer de geselecteerde datum terug naar een Timestamp om compatibel te zijn met de berekeningsfunctie
+    selected_time = pd.Timestamp(selected_time)
 
 # Genereer de kaart op basis van de selectie van absolute of relatieve drukte
     traffic_map = create_aircraft_traffic_map(selected_time, absolute_mode=absolute_checkbox)
 
 # Weergeef de kaart
     st.components.v1.html(traffic_map._repr_html_(), width=700, height=500)
-
 
 # Streamlit-app
     def main():
