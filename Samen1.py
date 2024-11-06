@@ -497,7 +497,6 @@ if selected == 'Luchthavens':
 #--------------------------------------------------------------------------------------
 
 
-
 # Voeg een checkbox toe
     st.subheader("Hittekaart Europa")
 
@@ -539,21 +538,23 @@ if selected == 'Luchthavens':
     # Bereken het aantal vliegtuigen op de luchthavens op de geselecteerde tijd
         airport_traffic = calculate_aircraft_on_airport(selected_time)
 
-    # Kies welke kolom als basis voor de heatmap wordt gebruikt
+    # Kies welke kolom als basis voor de heatmap wordt gebruikt en pas een schaalfactor toe
         if absolute_mode:
             marker_column = 'Absolute_vluchten'
+            scale_factor = 0.03  # Lagere schaalfactor voor absolute aantallen
         else:
             marker_column = 'Aantal_vliegtuigen'
+            scale_factor = 0.1  # Hogere schaalfactor voor relatieve aantallen
 
     # Maak de kaart met een centraal punt in Europa
         traffic_map = folium.Map(location=[50, 10], zoom_start=4)
 
     # Voeg markers toe aan de kaart voor elke luchthaven
         for idx, row in airport_traffic.iterrows():
-        # Bepaal de grootte van de marker op basis van het aantal vluchten
+        # Bepaal de grootte van de marker op basis van het aantal vluchten en de schaalfactor
             folium.CircleMarker(
                 location=[row['Latitude'], row['Longitude']],
-                radius=row[marker_column] / 10,  # Maak de marker afhankelijk van het aantal vluchten
+                radius=row[marker_column] * scale_factor,  # Pas schaalfactor toe
                 color='red',
                 fill=True,
                 fill_opacity=0.6,
@@ -582,6 +583,7 @@ if selected == 'Luchthavens':
 
 # Weergeef de kaart
     st.components.v1.html(traffic_map._repr_html_(), width=700, height=500)
+    )
 
 # Streamlit-app
     def main():
