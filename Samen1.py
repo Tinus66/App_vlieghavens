@@ -541,7 +541,7 @@ if selected == 'Luchthavens':
     # Kies welke kolom als basis voor de heatmap wordt gebruikt en pas een schaalfactor toe
         if absolute_mode:
             marker_column = 'Absolute_vluchten'
-            scale_factor = 0.03  # Lagere schaalfactor voor absolute aantallen
+            scale_factor = 0.001  # Lagere schaalfactor voor absolute aantallen
         else:
             marker_column = 'Aantal_vliegtuigen'
             scale_factor = 0.1  # Hogere schaalfactor voor relatieve aantallen
